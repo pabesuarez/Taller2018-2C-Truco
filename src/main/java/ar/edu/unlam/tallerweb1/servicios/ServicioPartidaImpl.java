@@ -16,8 +16,10 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		//repartir cartas
 		partida.setManoJugador1(new int[]{mazo.get(0),mazo.get(2),mazo.get(4)});
 		partida.setManoJugador2(new int[]{mazo.get(1),mazo.get(3),mazo.get(5)});
-		partida.setCartasEnJuego1(new boolean[] {false,false,false});
-		partida.setCartasEnJuego2(new boolean[] {false,false,false});
+		//reiniciar la mesa
+		partida.setCartasEnJuego1(new int[] {0,0,0});
+		partida.setCartasEnJuego2(new int[] {0,0,0});
+		//refrescar la pantalla de ambos jugadores
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
 	}
@@ -82,9 +84,35 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	}
 
 	@Override
-	public int[] tirarCarta(Partida partida, Integer jugador, Integer carta) {
-		// PENDIENTE: aplicar sobre partida los cambios que provoque tirar la carta en la posicion del parametro carta
-		return null;
+	public void tirarCarta(Partida partida, Integer jugador, Integer carta) {
+		// si un jugador tira una carta en su turno se aplica el cambio y cambia de turno
+		if(jugador==1 && partida.getTurno() == 1) {
+			partida.setCartaJuego1(partida.getRonda(),carta);
+			partida.setTurno(2);
+		}else if (jugador==2 && partida.getTurno() == 2) {
+			partida.setCartaJuego2(partida.getRonda(), carta);
+			partida.setTurno(1);
+		}
+		//revisar que cartas hay en mesa
+		Integer carta1 = partida.getCartaJuego1(partida.getRonda());
+		Integer carta2 = partida.getCartaJuego2(partida.getRonda());
+		//si ambos jugadores han tirado carta se comprueban las cartas
+		if (carta1 !=0  && carta2 !=0) {
+			Integer resultado=compararValor(partida.getCartaMano1(carta1),partida.getCartaMano2(carta2));
+			//si era la ultima carta de la ronda se concluye la mano
+			if(partida.getRonda() == 3) {
+				concluirMano(partida);
+			}else {
+				//en caso de no ser parda pasa a ser turno del ganador de la ronda
+				if(resultado!=0) {
+					partida.setTurno(resultado);
+				}
+				partida.setRonda(partida.getRonda()+1);
+			}
+		}
+		//se refresca la pantalla en ambos jugadores
+		partida.setCambiosJugador1(true);
+		partida.setCambiosJugador2(true);
 	}
 
 	@Override
@@ -124,5 +152,19 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		}
 		return partida;
 	}
+
+	@Override
+	public Integer compararValor(Integer carta1, Integer carta2) {
+		Integer valor1=obtenerValor(carta1);
+		Integer valor2=obtenerValor(carta2);
+		if(valor1 > valor2) {
+			return 1; //gana el jugador 1
+		}else if (valor1 == valor2) {
+			return 0; // parda
+		}else {
+			return 2; // gana el jugador 2
+		}
+	}
+
 	
 }
