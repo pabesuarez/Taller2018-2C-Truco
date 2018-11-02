@@ -16,13 +16,13 @@ public class Partida {
 	private Integer puntajeJugador1=0;
 	private Integer puntajeJugador2=0;
 	//de quien es el turno
-	private Integer turno;
+	private Integer turno=1;
 	//quien es mano
 	private Integer mano;
 	//estado de la partida (0: recien creada, 1: esperando jugador, 2:empezada)
 	private Integer estado=0;
 	//indica la ronda de la mano actual
-	private Integer ronda=1;
+	private Integer ronda=0;
 	
 	
 	

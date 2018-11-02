@@ -17,8 +17,8 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		partida.setManoJugador1(new int[]{mazo.get(0),mazo.get(2),mazo.get(4)});
 		partida.setManoJugador2(new int[]{mazo.get(1),mazo.get(3),mazo.get(5)});
 		//reiniciar la mesa
-		partida.setCartasEnJuego1(new int[] {0,0,0});
-		partida.setCartasEnJuego2(new int[] {0,0,0});
+		partida.setCartasEnJuego1(new int[] {3,3,3});
+		partida.setCartasEnJuego2(new int[] {3,3,3});
 		//refrescar la pantalla de ambos jugadores
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
@@ -97,12 +97,12 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		Integer carta1 = partida.getCartaJuego1(partida.getRonda());
 		Integer carta2 = partida.getCartaJuego2(partida.getRonda());
 		//si ambos jugadores han tirado carta se comprueban las cartas
-		if (carta1 !=0  && carta2 !=0) {
+		if (carta1 !=3  && carta2 !=3) {
 			Integer resultado=compararValor(partida.getCartaMano1(carta1),partida.getCartaMano2(carta2));
 			//si era la ultima carta de la ronda se concluye la mano
 			if(partida.getRonda() == 3) {
 				concluirMano(partida);
-			}else {
+			} else {
 				//en caso de no ser parda pasa a ser turno del ganador de la ronda
 				if(resultado!=0) {
 					partida.setTurno(resultado);

@@ -15,7 +15,7 @@
 					</div>
 					<div class="col">
 						<div class="row">
-							<div class="col-6"><button class="btn btn-success">truco</button></div>
+							<div class="col-6"><button class="btn btn-success" onclick="actualizar()">truco</button></div>
 							<div class="col-6"><button class="btn btn-success">envido</button></div>
 						</div>
 						<div class="row">

@@ -45,6 +45,7 @@ public class ControladorApp {
 	@ResponseBody
 	@RequestMapping(path = "/app/comando", method = RequestMethod.POST, produces = "application/json")
     public Mensaje comando (@RequestBody Mensaje mensaje) {
+		
 		Partida partida = servicioPartida.getPartida(mensaje.getPartidaID());
 		Integer jugador = mensaje.getJugador();
 		Mensaje respuesta = new Mensaje();
