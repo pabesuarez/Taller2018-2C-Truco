@@ -12,6 +12,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 
 	@Override
 	public void repartirCartas(Partida partida) {
+		
 		Collections.shuffle(mazo); //mezclar el mazo
 		//repartir cartas
 		partida.setManoJugador1(new int[]{mazo.get(0),mazo.get(2),mazo.get(4)});
@@ -84,6 +85,27 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	}
 
 	@Override
+	// retorna el numero da la carta
+	public Integer obtenerNumero(Integer carta){
+	    Integer valor = carta%10;
+	    if (valor <= 6){
+	        return valor+1;
+	    }else{
+	        return valor+3;
+	    }
+	}
+
+	/*retorna el palo de la carta
+	0: espada
+	1: basto
+	2: oro
+	3: copa
+	*/
+	@Override
+	public Integer obtenerPalo(Integer carta){
+	    return carta/10;
+	}
+	@Override
 	public void tirarCarta(Partida partida, Integer jugador, Integer carta) {
 		// si un jugador tira una carta en su turno se aplica el cambio y cambia de turno
 		if(jugador==1 && partida.getTurno() == 1) {
@@ -133,13 +155,12 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		partida.setEstado(0);
 		//opciones
 		partida.setMano(1);
-		
-		
 		partidasEnCurso.add(partida);
 		partida.setPartidaID(partidasEnCurso.indexOf(partida));
 		return partida;
 	}
 	
+	@Override
 	// se une a la partida
 	public Partida unirseAPartida(Integer partidaID) {
 		Partida partida = getPartida(partidaID);
@@ -147,6 +168,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		if (estado == 0) {
 			partida.setEstado(1);
 		}else if(estado == 1) {
+			partida.setTurno(partida.getMano());
 			partida.setEstado(2);
 			repartirCartas(partida);
 		}
@@ -165,6 +187,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			return 2; // gana el jugador 2
 		}
 	}
+
 
 	
 }
