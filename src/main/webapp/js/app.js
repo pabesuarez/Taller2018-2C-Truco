@@ -5,6 +5,10 @@ var cartasPropias = [];
 var cartasOponente = [];
 var cartasMesaPropias = [];
 var cartasMesaOponente = [];
+var rondaGanadaPropia = [];
+var rondaGanadaOponente = [];
+var puntajeJ1 = []
+var puntajeJ2 = []
 
 var layer = new Konva.Layer();
 
@@ -13,20 +17,100 @@ $(function(){
 });
 
 
+function truco(){
+	if(turno==jugador){
+		$("#mensajePropio").text("Truco")
+	}
+}
+
+function envido(){
+	if(turno==jugador){
+		$("#mensajePropio").text("Envido")
+	}
+}
+
+function mazo(){
+	if(turno==jugador){
+		$("#mensajePropio").text("Me voy al mazo")
+	}
+}
+
+function faltaEnvido(){
+	if(turno==jugador){
+		$("#mensajePropio").text("Falta envido")
+	}
+}
+
 function refresh(){
-	console.log("draw");
-	console.log(cartasPropias[1]);
 	layer.draw();
+	switch(estado){
+	case 2:
+		if(turno==jugador){
+			$("#estado").text("tu turno");
+		}else{
+			$("#estado").text("turno del oponente");
+		}
+		break;
+	case 9:
+		$("#estado").text("la ronda termino");
+	}
 }
 
 function dibujar(carta,valorCarta){
 	carta.setFillPatternOffset({ x : (valorCarta%10)*80, y : Math.floor(valorCarta/10)*123});
 }
+function dibujarGanador(ronda,ganador){
+	if (ganador==1){
+		if (jugador==1){
+			rondaGanadaPropia[ronda].setFillPatternOffset({ x : 0, y : 0});
+			rondaGanadaOponente[ronda].setFillPatternOffset({ x : 80, y : 0});
+		}else{
+			rondaGanadaPropia[ronda].setFillPatternOffset({ x : 80, y : 0});
+			rondaGanadaOponente[ronda].setFillPatternOffset({ x : 0, y : 0});
+		}
+	}else if (ganador==2){
+		if (jugador==1){
+			rondaGanadaPropia[ronda].setFillPatternOffset({ x : 80, y : 0});
+			rondaGanadaOponente[ronda].setFillPatternOffset({ x : 0, y : 0});
+		}else{
+			rondaGanadaPropia[ronda].setFillPatternOffset({ x : 0, y : 0});
+			rondaGanadaOponente[ronda].setFillPatternOffset({ x : 80, y : 0});
+		}
+	}else if (ganador==3){
+		rondaGanadaPropia[ronda].setFillPatternOffset({ x : 0, y : 0});
+		rondaGanadaOponente[ronda].setFillPatternOffset({ x : 0, y : 0});
+	}else{
+		rondaGanadaPropia[ronda].setFillPatternOffset({ x : 80, y : 0});
+		rondaGanadaOponente[ronda].setFillPatternOffset({ x : 80, y : 0});
+	}
+}
+
+
+function actualizarPuntaje(njugador,puntaje){
+	if (puntaje>30){
+		puntaje=30;
+	}
+	var i = 0;
+	var p;
+	if (njugador == 1){
+		p=puntajeJ1;
+	}else{
+		p=puntajeJ2;
+	}
+	while(puntaje >5){
+		p[i].setFillPatternOffset({ x : 160, y : 0});
+		i+=1;
+		puntaje-=5;
+	}
+	if (puntaje!=0){
+		p[i].setFillPatternOffset({ x : (puntaje*32), y : 0});
+	}
+}
+
 
 function actualizar(){
 	
 	var send = {}
-	console.log("asd");
 	send["jugador"] = jugador;
 	send["partidaID"] = idPartida;
     $.ajax({
@@ -44,6 +128,7 @@ function actualizar(){
 		        	for(i=0;i<=2;i++){
 			        	dibujar(cartasPropias[i],data.manoJugador1[i]);
 			        	dibujar(cartasOponente[i],40);
+			        	dibujarGanador(i,data.resultado[i]);
 		        	}
 		        	for(i=0;i<=2;i++){
 			        	if (data.cartasEnJuego1[i] != 3){
@@ -63,6 +148,7 @@ function actualizar(){
 		        	for(i=0;i<=2;i++){
 			        	dibujar(cartasPropias[i],data.manoJugador2[i]);
 			        	dibujar(cartasOponente[i],40);
+			        	dibujarGanador(i,data.resultado[i]);
 		        	}
 		        	for(i=0;i<=2;i++){
 			        	if (data.cartasEnJuego2[i] != 3){
@@ -77,8 +163,10 @@ function actualizar(){
 			        	}else{
 			        		dibujar(cartasMesaOponente[i],41);
 			        	}
-		        	}
+		        	}		        	
         		}
+        		actualizarPuntaje(1,data.puntajeJugador1);
+	        	actualizarPuntaje(2,data.puntajeJugador2);
         		turno=data.turno;
             	estado=data.estado;
             	refresh();
@@ -115,155 +203,123 @@ function draw(images) {
         height: height
     });
     
-
-    cartasPropias[0] = new Konva.Rect({
-        x: 112,
-        y: 421,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
-     
-    cartasPropias[1] = new Konva.Rect({
-        x: 200,
-        y: 421,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
-    
-    cartasPropias[2] = new Konva.Rect({
-        x: 283,
-        y: 421,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
+    for(i=0;i<=2;i++){
+    	cartasPropias[i] = new Konva.Rect({
+            x: 40+(90*i),
+            y: 421,
+            width:80,
+            height:123,
+            fillPatternImage: images.cartas,
+            fillPatternOffset: { x : 0, y : 0},
+        });
+    	
+    	
+    	layer.add(cartasPropias[i]);
+    	
+    	rondaGanadaPropia[i] = new Konva.Rect({
+            x: 40+(90*i),
+            y: 396,
+            width:80,
+            height:20,
+            fillPatternImage: images.ganador,
+            fillPatternOffset: { x : 0, y : 0},
+        });
+    	layer.add(rondaGanadaPropia[i]);
+    	
+        cartasMesaPropias[i] = new Konva.Rect({
+            x: 40+(90*i),
+            y: 272,
+            width:80,
+            height:123,
+            fillPatternImage: images.cartas,
+            fillPatternOffset: { x : 0, y : 0},
+        });
+        
+        layer.add(cartasMesaPropias[i]);
+        
+        cartasOponente[i] = new Konva.Rect({
+            x: 40+(90*i),
+            y: 2,
+            width:80,
+            height:123,
+            fillPatternImage: images.cartas,
+            fillPatternOffset: { x : 0, y : 0},
+        });
+        layer.add(cartasOponente[i])
+        
+        rondaGanadaOponente[i] = new Konva.Rect({
+            x: 40+(90*i),
+            y: 125,
+            width:80,
+            height:20,
+            fillPatternImage: images.ganador,
+            fillPatternOffset: { x : 0, y : 0},
+        });
+    	layer.add(rondaGanadaOponente[i]);
+    	
+        cartasMesaOponente[i] = new Konva.Rect({
+            x: 40+(90*i),
+            y: 146,
+            width:80,
+            height:123,
+            fillPatternImage: images.cartas,
+            fillPatternOffset: { x : 0, y : 0},
+        });
+        layer.add(cartasMesaOponente[i]);
+    }
+        
+    for (i=0;i<6;i++){
+    	puntajeJ1[i] = new Konva.Rect({
+            x: 340,
+            y: 40+(i*40),
+            width:32,
+            height:32,
+            fillPatternImage: images.puntaje,
+            fillPatternOffset: { x : 0, y : 0},
+        });
+    	
+    	puntajeJ2[i] = new Konva.Rect({
+            x: 390,
+            y: 40+(i*40),
+            width:32,
+            height:32,
+            fillPatternImage: images.puntaje,
+            fillPatternOffset: { x : 0, y : 0},
+        });
+    	
+    	layer.add(puntajeJ1[i]);
+    	layer.add(puntajeJ2[i]);
+    }
     
     cartasPropias[0].on('click', function(){ tirarCarta(0) });
     cartasPropias[1].on('click', function(){ tirarCarta(1) });
     cartasPropias[2].on('click', function(){ tirarCarta(2) });
-    
-    
-    cartasMesaPropias[0] = new Konva.Rect({
-        x: 112,
-        y: 272,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
-    
-    cartasMesaPropias[1] = new Konva.Rect({
-        x: 200,
-        y: 272,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
-    
-    cartasMesaPropias[2] = new Konva.Rect({
-        x: 283,
-        y: 272,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
-    
-    cartasOponente[0] = new Konva.Rect({
-        x: 112,
-        y: 2,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
-    
-    cartasOponente[1] = new Konva.Rect({
-        x: 200,
-        y: 2,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
-    
-    cartasOponente[2] = new Konva.Rect({
-        x: 283,
-        y: 2,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
-    
-    cartasMesaOponente[0] = new Konva.Rect({
-        x: 112,
-        y: 146,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
-    
-    cartasMesaOponente[1] = new Konva.Rect({
-        x: 200,
-        y: 146,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
-    
-    cartasMesaOponente[2] = new Konva.Rect({
-        x: 283,
-        y: 146,
-        width:80,
-        height:123,
-        fillPatternImage: images.cartas,
-        fillPatternOffset: { x : 0, y : 0},
-    });
-
-    layer.add(cartasPropias[0]);
-    layer.add(cartasPropias[1]);
-    layer.add(cartasPropias[2]);
-    layer.add(cartasOponente[0]);
-    layer.add(cartasOponente[1]);
-    layer.add(cartasOponente[2]);
-    layer.add(cartasMesaPropias[0]);
-    layer.add(cartasMesaPropias[1]);
-    layer.add(cartasMesaPropias[2]);
-    layer.add(cartasMesaOponente[0]);
-    layer.add(cartasMesaOponente[1]);
-    layer.add(cartasMesaOponente[2]);
-    
  
     stage.add(layer);
 }
 
 function tirarCarta(carta){
-	var send={}
-	send["partidaID"]=idPartida;
-	send["comando"]=1;
-	send["jugador"]=jugador;
-	send["parametro"]=carta;
-    $.ajax({
-        type: 'POST',
-        contentType : "application/json",
-        url: '/proyecto-limpio-spring/app/comando',
-        datatype: 'json',
-        data: JSON.stringify(send)
-    });
-    actualizar();
+	if(jugador==turno){
+		var send={}
+		send["partidaID"]=idPartida;
+		send["comando"]=1;
+		send["jugador"]=jugador;
+		send["parametro"]=carta;
+	    $.ajax({
+	        type: 'POST',
+	        contentType : "application/json",
+	        url: '/proyecto-limpio-spring/app/comando',
+	        datatype: 'json',
+	        data: JSON.stringify(send)
+	    });
+	    actualizar();
+	}
 }
 
 var sources = {
-    cartas: '/proyecto-limpio-spring/img/cartas.png'
+    cartas: '/proyecto-limpio-spring/img/cartas.png',
+    puntaje: '/proyecto-limpio-spring/img/puntaje.png',
+    ganador: '/proyecto-limpio-spring/img/ganador.png'
 };
 
 loadImages(sources, function(images) {

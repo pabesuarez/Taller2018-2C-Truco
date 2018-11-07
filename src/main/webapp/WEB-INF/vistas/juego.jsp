@@ -8,19 +8,28 @@
 	<body>
 		<!-- Placed at the end of the document so the pages load faster -->
 		<div class="container">
-			<div style="width:800px">
+			<div style="width:800px;height:550px">
 				<div class="row">
 					<div class="col" style="min-width:512px;max-width:512px;">
 						<div id="juego"></div>
 					</div>
-					<div class="col">
+					<div style="height:550px" class="col border">
 						<div class="row">
-							<div class="col-6"><button class="btn btn-success" onclick="actualizar()">truco</button></div>
-							<div class="col-6"><button class="btn btn-success">envido</button></div>
+							<span style="height:4rem" id="mensajeOponente" class="border w-100"></span>
 						</div>
 						<div class="row">
-							<div class="col-6"><button class="btn btn-success">mazo</button></div>
-							<div class="col-6"><button class="btn btn-success">falta envido</button></div>
+							<div class="col-6"><button class="btn btn-success" onclick="truco()">truco</button></div>
+							<div class="col-6"><button class="btn btn-success" onclick="envido()">envido</button></div>
+						</div>
+						<div class="row">
+							<div class="col-6"><button class="btn btn-success" onclick="mazo()">mazo</button></div>
+							<div class="col-6"><button class="btn btn-success" onclick="faltaEnvido()">falta envido</button></div>
+						</div>
+						<div class="row">
+							<span style="height:4rem" id="mensajePropio" class="border w-100"></span>
+						</div>
+						<div class="row">
+							<span style="height:2rem" id="estado" class="border w-100"></span>
 						</div>
 					</div>
 				</div>

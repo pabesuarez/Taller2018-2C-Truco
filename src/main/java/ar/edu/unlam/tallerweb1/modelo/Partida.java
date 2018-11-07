@@ -23,7 +23,7 @@ public class Partida {
 	private Integer estado=0;
 	//indica la ronda de la mano actual
 	private Integer ronda=0;
-	
+	private int[] resultado;
 	
 	
 	public boolean isCambiosJugador1() {
@@ -122,6 +122,18 @@ public class Partida {
 	}
 	public Integer getCartaMano2(Integer i) {
 		return this.manoJugador2[i];
+	}
+	public Integer getResultado(Integer i) {
+		return this.resultado[i];
+	}
+	public void setResultado(Integer i,Integer valor) {
+		this.resultado[i] = valor;
+	}
+	public int[] getResultado() {
+		return resultado;
+	}
+	public void setResultado(int[] resultado) {
+		this.resultado = resultado;
 	}
 	
 }

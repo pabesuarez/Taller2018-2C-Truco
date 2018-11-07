@@ -19,6 +19,8 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		//reiniciar la mesa
 		partida.setCartasEnJuego1(new int[] {3,3,3});
 		partida.setCartasEnJuego2(new int[] {3,3,3});
+		//reiniciar los resultados
+		partida.setResultado(new int[] {0,0,0});
 		//refrescar la pantalla de ambos jugadores
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
@@ -98,13 +100,28 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		Integer carta2 = partida.getCartaJuego2(partida.getRonda());
 		//si ambos jugadores han tirado carta se comprueban las cartas
 		if (carta1 !=3  && carta2 !=3) {
-			Integer resultado=compararValor(partida.getCartaMano1(carta1),partida.getCartaMano2(carta2));
+			Integer resultado = compararValor(partida.getCartaMano1(carta1),partida.getCartaMano2(carta2));
+			partida.setResultado(partida.getRonda(),resultado);
 			//si era la ultima carta de la ronda se concluye la mano
-			if(partida.getRonda() == 3) {
+			if(partida.getRonda() == 2) {
 				concluirMano(partida);
+				return;
 			} else {
+				//si la ronda anterior fue parda y la actual tuvo ganador se termina la ronda
+				if(partida.getRonda() > 0) {
+					if(partida.getResultado(partida.getRonda()-1) == 3 && resultado != 3) {
+						concluirMano(partida);
+						return;
+					}
+				}
+				//si era la segunda ronda y el ganador fue el mismo jugador se termina la ronda
+				if (partida.getRonda() == 1 && partida.getResultado(0) == partida.getResultado(1)) {
+					concluirMano(partida);
+					return;
+				}
+				
 				//en caso de no ser parda pasa a ser turno del ganador de la ronda
-				if(resultado!=0) {
+				if(resultado != 3) {
 					partida.setTurno(resultado);
 				}
 				partida.setRonda(partida.getRonda()+1);
@@ -117,6 +134,11 @@ public class ServicioPartidaImpl implements ServicioPartida{
 
 	@Override
 	public Integer concluirMano(Partida partida) {
+		// hardcodeo de prueba, eliminar al implementar
+		partida.setEstado(9);
+		partida.setTurno(0);
+		partida.setCambiosJugador1(true);
+		partida.setCambiosJugador2(true);
 		// PENDIENTE: Aplicar el puntaje acumulado y resetear partida para la siguiente mano
 		return null;
 	}
@@ -133,8 +155,6 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		partida.setEstado(0);
 		//opciones
 		partida.setMano(1);
-		
-		
 		partidasEnCurso.add(partida);
 		partida.setPartidaID(partidasEnCurso.indexOf(partida));
 		return partida;
@@ -160,7 +180,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		if(valor1 > valor2) {
 			return 1; //gana el jugador 1
 		}else if (valor1 == valor2) {
-			return 0; // parda
+			return 3; // parda
 		}else {
 			return 2; // gana el jugador 2
 		}
