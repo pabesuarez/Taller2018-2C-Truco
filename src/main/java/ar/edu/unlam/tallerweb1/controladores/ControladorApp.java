@@ -75,7 +75,8 @@ public class ControladorApp {
 		modelo.put("partida", partida);
 		return "redirect:/jugar/"+partida.getPartidaID();
 	}
-
+	
+	//unirse a una partida ya existente
 	@RequestMapping("/jugar/{partidaID}")
 	public ModelAndView jugar(@PathVariable Integer partidaID) {
 		Partida partida = servicioPartida.unirseAPartida(partidaID);
