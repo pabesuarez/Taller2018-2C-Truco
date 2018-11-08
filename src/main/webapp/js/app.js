@@ -7,8 +7,10 @@ var cartasMesaPropias = [];
 var cartasMesaOponente = [];
 var rondaGanadaPropia = [];
 var rondaGanadaOponente = [];
-var puntajeJ1 = []
-var puntajeJ2 = []
+var puntajeJ1 = [];
+var puntajeJ2 = [];
+var ganadorRondaJugador1 = 0;
+var ganadorRondaJugador2 = 0;
 
 var layer = new Konva.Layer();
 
@@ -62,17 +64,25 @@ function dibujar(carta,valorCarta){
 function dibujarGanador(ronda,ganador){
 	if (ganador==1){
 		if (jugador==1){
+			ganadorRondaJugador1 += 1;
+			$("#puntaje").text("Jugador 1:" + ganadorRondaJugador1 + " Jugador 2:" + ganadorRondaJugador2)
 			rondaGanadaPropia[ronda].setFillPatternOffset({ x : 0, y : 0});
 			rondaGanadaOponente[ronda].setFillPatternOffset({ x : 80, y : 0});
 		}else{
+			ganadorRondaJugador1 += 1;
+			$("#puntaje").text("Jugador 1:" + ganadorRondaJugador1 + " Jugador 2:" + ganadorRondaJugador2)
 			rondaGanadaPropia[ronda].setFillPatternOffset({ x : 80, y : 0});
 			rondaGanadaOponente[ronda].setFillPatternOffset({ x : 0, y : 0});
 		}
 	}else if (ganador==2){
 		if (jugador==1){
+			ganadorRondaJugador2 +=1;
+			$("#puntaje").text("Jugador 1:" + ganadorRondaJugador1 + " Jugador 2:" + ganadorRondaJugador2)
 			rondaGanadaPropia[ronda].setFillPatternOffset({ x : 80, y : 0});
 			rondaGanadaOponente[ronda].setFillPatternOffset({ x : 0, y : 0});
 		}else{
+			ganadorRondaJugador2 +=1;
+			$("#puntaje").text("Jugador 1:" + ganadorRondaJugador1 + " Jugador 2:" + ganadorRondaJugador2)
 			rondaGanadaPropia[ronda].setFillPatternOffset({ x : 0, y : 0});
 			rondaGanadaOponente[ronda].setFillPatternOffset({ x : 80, y : 0});
 		}

@@ -30,6 +30,7 @@
 						</div>
 						<div class="row">
 							<span style="height:2rem" id="estado" class="border w-100"></span>
+							<span style="height:2rem" id="puntaje" class="border w-100"> Jugador 1: 0 || Jugador 2: 0 </span>
 						</div>
 					</div>
 				</div>
