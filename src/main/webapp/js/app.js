@@ -9,6 +9,8 @@ var rondaGanadaPropia = [];
 var rondaGanadaOponente = [];
 var puntajeJ1 = []
 var puntajeJ2 = []
+var nombre1;
+var nombre2;
 
 var layer = new Konva.Layer();
 
@@ -116,7 +118,7 @@ function actualizar(){
     $.ajax({
         type: 'POST',
         contentType : "application/json",
-        url: '/proyecto-limpio-spring/app/actualizar',
+        url: proyecto+'/app/actualizar',
         datatype: 'json',
         data: JSON.stringify(send),
         success: function (data) {
@@ -169,6 +171,8 @@ function actualizar(){
 	        	actualizarPuntaje(2,data.puntajeJugador2);
         		turno=data.turno;
             	estado=data.estado;
+            	nombre1.text(data.nombreJugador1);
+            	nombre2.text(data.nombreJugador2);
             	refresh();
             	setTimeout(function(){ actualizar() },1000);
         	}	
@@ -202,6 +206,22 @@ function draw(images) {
         width: width,
         height: height
     });
+    
+	nombre1 = new Konva.Text({
+        x: 382-(nombreJugador1.length*7),
+        y: 2,
+        text: nombreJugador1,
+    });
+	
+	layer.add(nombre1);
+	
+	nombre2 = new Konva.Text({
+        x: 390,
+        y: 2,
+        text: nombreJugador2,
+    });
+    
+	layer.add(nombre2);
     
     for(i=0;i<=2;i++){
     	cartasPropias[i] = new Konva.Rect({
@@ -308,7 +328,7 @@ function tirarCarta(carta){
 	    $.ajax({
 	        type: 'POST',
 	        contentType : "application/json",
-	        url: '/proyecto-limpio-spring/app/comando',
+	        url: proyecto+'/app/comando',
 	        datatype: 'json',
 	        data: JSON.stringify(send)
 	    });
@@ -317,9 +337,9 @@ function tirarCarta(carta){
 }
 
 var sources = {
-    cartas: '/proyecto-limpio-spring/img/cartas.png',
-    puntaje: '/proyecto-limpio-spring/img/puntaje.png',
-    ganador: '/proyecto-limpio-spring/img/ganador.png'
+    cartas: proyecto+'/img/cartas.png',
+    puntaje: proyecto+'/img/puntaje.png',
+    ganador: proyecto+'/img/ganador.png'
 };
 
 loadImages(sources, function(images) {

@@ -1,15 +1,29 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
-import java.util.ArrayList;
+
 import java.util.Collections;
 
-import org.springframework.stereotype.Service;
+import javax.inject.Inject;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ar.edu.unlam.tallerweb1.dao.PartidaEnCursoDao;
+import ar.edu.unlam.tallerweb1.dao.UsuarioDao;
 import ar.edu.unlam.tallerweb1.modelo.Partida;
+import ar.edu.unlam.tallerweb1.modelo.PartidaEnCurso;
+import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
 @Service("servicioPartida")
+@Transactional
 public class ServicioPartidaImpl implements ServicioPartida{
 
+	@Inject
+	private PartidaEnCursoDao partidaEnCursoDao;
+	
+	@Inject
+	private UsuarioDao usuarioDao;
+	
 	@Override
 	public void repartirCartas(Partida partida) {
 		Collections.shuffle(mazo); //mezclar el mazo
@@ -160,7 +174,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			partida.setPuntajeJugador2(partida.getPuntajeJugador2()+1);
 		}
 		partida.setEstado(9);
-		partida.setTurno(1);
+		partida.setTurno(0);
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
 		
@@ -171,6 +185,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		}
 		repartirCartas(partida);
 		partida.setEstado(2);
+		partida.setTurno(1);
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
 		// PENDIENTE: Aplicar el puntaje acumulado y resetear partida para la siguiente mano
@@ -187,6 +202,11 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	public Partida nuevaPartida() {
 		Partida partida = new Partida();
 		partida.setEstado(0);
+		//agregar la partida a la base de datos
+		PartidaEnCurso partidaEnCurso = new PartidaEnCurso();
+		partidaEnCurso.setEstado(0);
+		partidaEnCurso.setMensaje("prueba");
+		partida.setPartidaEnCursoID(partidaEnCursoDao.nuevaPartida(partidaEnCurso));
 		//opciones
 		partida.setMano(1);
 		partidasEnCurso.add(partida);
@@ -195,15 +215,32 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	}
 	
 	// se une a la partida
-	public Partida unirseAPartida(Integer partidaID) {
+	public Partida unirseAPartida(Integer partidaID,Long jugadorId) {
 		Partida partida = getPartida(partidaID);
+		Long partidaEnCursoID = partida.getPartidaEnCursoID();
+		Usuario jugador = usuarioDao.buscarPorId(jugadorId);
 		Integer estado = partida.getEstado();
 		if (estado == 0) {
 			partida.setEstado(1);
+			if (jugador != null) {
+				partida.setNombreJugador1(jugador.getNombre());
+			}else {
+				partida.setNombreJugador1("Invitado");
+			}
+			partidaEnCursoDao.unirJugador(partidaEnCursoID, 1, jugador);
+			partidaEnCursoDao.cambiarEstado(partidaEnCursoID, 1);
 		}else if(estado == 1) {
 			partida.setEstado(2);
+			if (jugador != null) {
+				partida.setNombreJugador2(jugador.getNombre());
+			}else {
+				partida.setNombreJugador2("Invitado");
+			}
+			partidaEnCursoDao.unirJugador(partidaEnCursoID, 2, jugador);
+			partidaEnCursoDao.cambiarEstado(partidaEnCursoID, 2);
 			repartirCartas(partida);
 		}
+		
 		return partida;
 	}
 

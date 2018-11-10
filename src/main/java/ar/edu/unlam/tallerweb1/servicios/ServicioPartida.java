@@ -15,5 +15,5 @@ public interface ServicioPartida {
 	public Integer concluirMano(Partida partida);
 	public Partida getPartida(Integer partidaID);
 	public Partida nuevaPartida();
-	public Partida unirseAPartida(Integer partidaID);
+	public Partida unirseAPartida(Integer partidaID,Long jugadorId);
 }
