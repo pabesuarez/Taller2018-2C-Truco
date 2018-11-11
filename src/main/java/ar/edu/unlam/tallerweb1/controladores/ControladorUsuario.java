@@ -57,5 +57,15 @@ public class ControladorUsuario {
 		return new ModelAndView("registro", modelo);
 	}
 
-
+	@RequestMapping(path="/registrarUsuario",method=RequestMethod.POST)
+	public ModelAndView irAValidarMascota(@ModelAttribute ("usuario") Usuario usuario,HttpServletRequest request) {
+		
+		ModelMap modelo = new ModelMap();
+		modelo.put("mascota", modelo);
+		servicioUsuario.nuevoUsuario(usuario);
+		modelo.put("aviso", "Se CREO exitosamente");
+		
+		
+	return new ModelAndView("correcto",modelo);
+	}
 }
