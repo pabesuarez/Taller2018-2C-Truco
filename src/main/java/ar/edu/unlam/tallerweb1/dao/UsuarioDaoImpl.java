@@ -18,25 +18,24 @@ public class UsuarioDaoImpl implements UsuarioDao {
 
 	@Override
 	public Usuario buscarPorId(Long usuarioId) {
-		// PENDIENTE: buscar un usuario por ID y retornarlo
-		return null;
+		final Session session = sessionFactory.getCurrentSession();
+		return (Usuario) session.createCriteria(Usuario.class).add(Restrictions.eq("id", usuarioId)).uniqueResult();
 	}
-
-
+	
 
 	@Override
 	public void nuevoUsuario(Usuario usuario) {
-		// PENDIENTE: guardar un usuario en la base de datos
+		final Session session = sessionFactory.getCurrentSession();
+		session.save(usuario);
 	}
-
 	//Comprobar las credenciales y retorna el usuario logeado, si las credenciales son incorrectas
 	//o el usuario no existe retorna null
 	@Override
-	public Usuario login(String nombre, String password) {
+	public Usuario login(String nombre, String pass) {
 		final Session session = sessionFactory.getCurrentSession();
 		return (Usuario) session.createCriteria(Usuario.class)
 				.add(Restrictions.eq("nombre", nombre))
-				.add(Restrictions.eq("password", password))
+				.add(Restrictions.eq("pass", pass))
 				.uniqueResult();
 	}
 

@@ -18,7 +18,7 @@
 				<div class="col-md-12 header">
 					<img style="height:60px" src ="${url}/img/logo.png"/>
 					<span class="ml-5">logeado como: ${sessionScope.usuarioNombre}</span>
-					<a class="ml-5" href="${url}/registro">Registrarse</a>
+					<a class="ml-5" href="${url}/registro">Registrarse &nbsp;&nbsp;</a>
 					<a href="${url}/login">Login</a>
 				</div>
 			</div>

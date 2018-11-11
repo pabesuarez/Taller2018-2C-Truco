@@ -7,5 +7,5 @@ public interface UsuarioDao {
 	
 	public Usuario buscarPorId (Long usuarioId);
 	public void nuevoUsuario (Usuario usuario);
-	public Usuario login(String nombre, String password);
+	public Usuario login(String nombre, String pass);
 }

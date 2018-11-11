@@ -16,8 +16,8 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
 	private UsuarioDao servicioUsuarioDao;
 
 	@Override
-	public Usuario login (String nombre,String password) {
-		return servicioUsuarioDao.login(nombre,password);
+	public Usuario login (String nombre,String pass) {
+		return servicioUsuarioDao.login(nombre,pass);
 	}
 
 	@Override

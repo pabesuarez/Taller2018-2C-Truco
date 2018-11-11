@@ -31,11 +31,11 @@ public class ControladorUsuario {
 	public ModelAndView validarLogin(@ModelAttribute("usuario") Usuario usuario, HttpServletRequest request) {
 		ModelMap model = new ModelMap();
 
-		Usuario usuarioBuscado = servicioUsuario.login(usuario.getNombre(),usuario.getPassword());
+		Usuario usuarioBuscado = servicioUsuario.login(usuario.getNombre(),usuario.getPass());
 		if (usuarioBuscado != null) {
 			request.getSession().setAttribute("usuarioNombre", usuarioBuscado.getNombre());
 			request.getSession().setAttribute("usuarioId", usuarioBuscado.getId());
-			return new ModelAndView("redirect:/home");
+			return new ModelAndView("redirect:/nuevaPartida");
 		} else {
 			model.put("error", "Usuario o clave incorrecta");
 		}

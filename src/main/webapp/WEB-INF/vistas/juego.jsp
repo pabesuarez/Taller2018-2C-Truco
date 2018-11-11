@@ -16,12 +16,12 @@
 						<span style="height:4rem" id="mensajeOponente" class="border w-100"></span>
 					</div>
 					<div class="row">
-						<div class="col-6"><button class="btn btn-success" onclick="truco()">truco</button></div>
-						<div class="col-6"><button class="btn btn-success" onclick="envido()">envido</button></div>
+						<div class="col-6"><button class="btn btn-success" onclick="truco()">truco</button></div><br>
+						<br><div class="col-6"><button class="btn btn-success" onclick="envido()">envido</button></div>
 					</div>
 					<div class="row">
-						<div class="col-6"><button class="btn btn-success" onclick="mazo()">mazo</button></div>
-						<div class="col-6"><button class="btn btn-success" onclick="faltaEnvido()">falta envido</button></div>
+						<div class="col-6"><button class="btn btn-success" onclick="mazo()">mazo</button></div><br>
+						<br><div class="col-6"><button class="btn btn-success" onclick="faltaEnvido()">falta envido</button></div>
 					</div>
 					<div class="row">
 						<span style="height:4rem" id="mensajePropio" class="border w-100"></span>

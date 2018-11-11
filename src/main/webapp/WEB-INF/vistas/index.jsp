@@ -6,6 +6,13 @@
 <%@taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <t:default>
 	<jsp:attribute name="body">
-		<a href="${url}/nuevaPartida" class="btn btn-primary">Nueva Partida</a>
+	    <br>
+	      <br>
+         <div align="center">
+				<img src="img/logo.png" class="img-fluid" alt="Responsive image"  width="auto" height="100">
+		</div>
+		  <br>
+		    <br>
+		<a href="${url}/nuevaPartida" class="btn btn-primary btn-block btn-success">Nueva Partida</a>
 	</jsp:attribute>
 </t:default>
