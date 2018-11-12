@@ -1,18 +1,31 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
-import java.util.ArrayList;
+
 import java.util.Collections;
 
-import org.springframework.stereotype.Service;
+import javax.inject.Inject;
 
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import ar.edu.unlam.tallerweb1.dao.PartidaEnCursoDao;
+import ar.edu.unlam.tallerweb1.dao.UsuarioDao;
 import ar.edu.unlam.tallerweb1.modelo.Partida;
+import ar.edu.unlam.tallerweb1.modelo.PartidaEnCurso;
+import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
 @Service("servicioPartida")
+@Transactional
 public class ServicioPartidaImpl implements ServicioPartida{
 
+	@Inject
+	private PartidaEnCursoDao partidaEnCursoDao;
+	
+	@Inject
+	private UsuarioDao usuarioDao;
+	
 	@Override
 	public void repartirCartas(Partida partida) {
-		
 		Collections.shuffle(mazo); //mezclar el mazo
 		//repartir cartas
 		partida.setManoJugador1(new int[]{mazo.get(0),mazo.get(2),mazo.get(4)});
@@ -22,6 +35,8 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		partida.setCartasEnJuego2(new int[] {3,3,3});
 		//reiniciar los resultados
 		partida.setResultado(new int[] {0,0,0});
+		//reiniciar la ronda
+		partida.setRonda(0);
 		//refrescar la pantalla de ambos jugadores
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
@@ -87,27 +102,6 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	}
 
 	@Override
-	// retorna el numero da la carta
-	public Integer obtenerNumero(Integer carta){
-	    Integer valor = carta%10;
-	    if (valor <= 6){
-	        return valor+1;
-	    }else{
-	        return valor+3;
-	    }
-	}
-
-	/*retorna el palo de la carta
-	0: espada
-	1: basto
-	2: oro
-	3: copa
-	*/
-	@Override
-	public Integer obtenerPalo(Integer carta){
-	    return carta/10;
-	}
-	@Override
 	public void tirarCarta(Partida partida, Integer jugador, Integer carta) {
 		// si un jugador tira una carta en su turno se aplica el cambio y cambia de turno
 		if(jugador==1 && partida.getTurno() == 1) {
@@ -129,9 +123,15 @@ public class ServicioPartidaImpl implements ServicioPartida{
 				concluirMano(partida);
 				return;
 			} else {
-				//si la ronda anterior fue parda y la actual tuvo ganador se termina la ronda
-				if(partida.getRonda() > 0) {
+				//verificacion en la segunda ronda
+				if(partida.getRonda() == 1) {
+					//si la ronda anterior fue parda y la actual tuvo ganador se termina la ronda
 					if(partida.getResultado(partida.getRonda()-1) == 3 && resultado != 3) {
+						concluirMano(partida);
+						return;
+					}
+					//si la ronda anterior no fue parda y la actual si lo fue se termina la ronda
+					if(partida.getResultado(partida.getRonda()-1) != 3 && resultado == 3) {
 						concluirMano(partida);
 						return;
 					}
@@ -156,9 +156,36 @@ public class ServicioPartidaImpl implements ServicioPartida{
 
 	@Override
 	public Integer concluirMano(Partida partida) {
-		// hardcodeo de prueba, eliminar al implementar
+		Integer total1=0;
+		Integer total2=0;
+		
+		for (Integer i=0;i<=2;i++) {
+			if(partida.getResultado(i) == 1 ) {
+				total1+=1;
+			}else if (partida.getResultado(i) == 2 ) {
+				total2+=1;
+			}
+		}
+		// si gana el jugador 1
+		if (total1>total2){
+			partida.setPuntajeJugador1(partida.getPuntajeJugador1()+1);
+		//si gana el jugador 2
+		}else if (total1<total2){
+			partida.setPuntajeJugador2(partida.getPuntajeJugador2()+1);
+		}
 		partida.setEstado(9);
 		partida.setTurno(0);
+		partida.setCambiosJugador1(true);
+		partida.setCambiosJugador2(true);
+		
+		try {
+			Thread.sleep(3000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		repartirCartas(partida);
+		partida.setEstado(2);
+		partida.setTurno(1);
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
 		// PENDIENTE: Aplicar el puntaje acumulado y resetear partida para la siguiente mano
@@ -175,6 +202,11 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	public Partida nuevaPartida() {
 		Partida partida = new Partida();
 		partida.setEstado(0);
+		//agregar la partida a la base de datos
+		PartidaEnCurso partidaEnCurso = new PartidaEnCurso();
+		partidaEnCurso.setEstado(0);
+		partidaEnCurso.setMensaje("prueba");
+		partida.setPartidaEnCursoID(partidaEnCursoDao.nuevaPartida(partidaEnCurso));
 		//opciones
 		partida.setMano(1);
 		partidasEnCurso.add(partida);
@@ -182,18 +214,33 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		return partida;
 	}
 	
-	@Override
 	// se une a la partida
-	public Partida unirseAPartida(Integer partidaID) {
+	public Partida unirseAPartida(Integer partidaID,Long jugadorId) {
 		Partida partida = getPartida(partidaID);
+		Long partidaEnCursoID = partida.getPartidaEnCursoID();
+		Usuario jugador = usuarioDao.buscarPorId(jugadorId);
 		Integer estado = partida.getEstado();
 		if (estado == 0) {
 			partida.setEstado(1);
+			if (jugador != null) {
+				partida.setNombreJugador1(jugador.getNombre());
+			}else {
+				partida.setNombreJugador1("Invitado");
+			}
+			partidaEnCursoDao.unirJugador(partidaEnCursoID, 1, jugador);
+			partidaEnCursoDao.cambiarEstado(partidaEnCursoID, 1);
 		}else if(estado == 1) {
-			partida.setTurno(partida.getMano());
 			partida.setEstado(2);
+			if (jugador != null) {
+				partida.setNombreJugador2(jugador.getNombre());
+			}else {
+				partida.setNombreJugador2("Invitado");
+			}
+			partidaEnCursoDao.unirJugador(partidaEnCursoID, 2, jugador);
+			partidaEnCursoDao.cambiarEstado(partidaEnCursoID, 2);
 			repartirCartas(partida);
 		}
+		
 		return partida;
 	}
 
@@ -209,7 +256,6 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			return 2; // gana el jugador 2
 		}
 	}
-
 
 	
 }

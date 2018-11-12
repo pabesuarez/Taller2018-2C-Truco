@@ -1,6 +1,7 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -13,7 +14,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.unlam.tallerweb1.modelo.Mensaje;
 import ar.edu.unlam.tallerweb1.modelo.Partida;
-import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import ar.edu.unlam.tallerweb1.servicios.ServicioPartida;
 
 @Controller
@@ -75,10 +75,11 @@ public class ControladorApp {
 		modelo.put("partida", partida);
 		return "redirect:/jugar/"+partida.getPartidaID();
 	}
-
+	
+	//unirse a una partida ya existente
 	@RequestMapping("/jugar/{partidaID}")
-	public ModelAndView jugar(@PathVariable Integer partidaID) {
-		Partida partida = servicioPartida.unirseAPartida(partidaID);
+	public ModelAndView jugar(@PathVariable Integer partidaID, HttpServletRequest request) {
+		Partida partida = servicioPartida.unirseAPartida(partidaID,(Long)request.getAttribute("usuarioId"));
 		ModelMap modelo = new ModelMap();
 		modelo.put("partida", partida);
 		return new ModelAndView("juego",modelo);

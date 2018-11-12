@@ -10,12 +10,10 @@ public interface ServicioPartida {
 	static List<Partida> partidasEnCurso = new ArrayList<Partida>();
 	public void repartirCartas(Partida partida);
 	public Integer obtenerValor(Integer carta);
-	public Integer obtenerNumero(Integer carta);
-	public Integer obtenerPalo(Integer carta);
 	public Integer compararValor(Integer carta1,Integer carta2);
 	public void tirarCarta(Partida partida, Integer jugador,Integer carta);
 	public Integer concluirMano(Partida partida);
 	public Partida getPartida(Integer partidaID);
 	public Partida nuevaPartida();
-	public Partida unirseAPartida(Integer partidaID);
+	public Partida unirseAPartida(Integer partidaID,Long jugadorId);
 }
