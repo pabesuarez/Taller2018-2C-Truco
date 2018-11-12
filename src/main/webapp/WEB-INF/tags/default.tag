@@ -11,6 +11,7 @@
 	    <link href="${url}/css/bootstrap.min.css" rel="stylesheet" >
 	    <link href="${url}/css/estilo.css" rel="stylesheet" >
 	    <link href="${url}/css/bootstrap-theme.min.css" rel="stylesheet">
+	    <link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet">
 	</head>
 	<body>
 		<div class ="container">
@@ -31,6 +32,8 @@
 		</div>
 		<script src="${url}/js/jquery-3.0.0.min.js"></script>
 		<script src="${url}/js/bootstrap.min.js" type="text/javascript"></script>
-		    <jsp:invoke fragment="scripts"/>
+		<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+		<script src="${url}/js/datatable.js" type="text/javascript"></script>
+		<jsp:invoke fragment="scripts"/>
 	</body>
 </html>

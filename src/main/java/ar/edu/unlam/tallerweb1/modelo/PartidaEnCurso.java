@@ -18,7 +18,6 @@ public class PartidaEnCurso {
 	private String mensaje;
 	private Integer estado;
 	
-	
 	public Long getId() {
 		return id;
 	}

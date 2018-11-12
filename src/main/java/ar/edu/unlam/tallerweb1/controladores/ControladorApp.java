@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,6 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.unlam.tallerweb1.modelo.Mensaje;
 import ar.edu.unlam.tallerweb1.modelo.Partida;
+import ar.edu.unlam.tallerweb1.modelo.PartidaEnCurso;
 import ar.edu.unlam.tallerweb1.servicios.ServicioPartida;
 
 @Controller
@@ -83,5 +86,14 @@ public class ControladorApp {
 		ModelMap modelo = new ModelMap();
 		modelo.put("partida", partida);
 		return new ModelAndView("juego",modelo);
+	}
+	
+	// lobby
+	@RequestMapping("/lobby")
+	public ModelAndView lobby() {
+		List<PartidaEnCurso> partidas = servicioPartida.obtenerPartidasEnCurso();
+		ModelMap modelo = new ModelMap();
+		modelo.put("partidas", partidas);
+		return new ModelAndView("lobby", modelo);
 	}
 }

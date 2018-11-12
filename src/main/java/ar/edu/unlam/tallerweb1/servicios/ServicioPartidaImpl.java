@@ -2,9 +2,12 @@ package ar.edu.unlam.tallerweb1.servicios;
 
 
 import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -256,6 +259,11 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			return 2; // gana el jugador 2
 		}
 	}
-
+	
+	@Override
+	public List<PartidaEnCurso> obtenerPartidasEnCurso() {
+		List<PartidaEnCurso> partidas = partidaEnCursoDao.traerTodasLasPartidasEnProgreso();
+		return partidas;
+	}
 	
 }
