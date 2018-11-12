@@ -1,10 +1,9 @@
 package ar.edu.unlam.tallerweb1.modelo;
 
 public class Partida {
-	//identificador de la partida en base de datos
-	private Long partidaEnCursoID;
 	//identificador de la partida
 	private Integer partidaID;
+	private Long partidaEnCursoID;
 	//indican si es necesario refrescar la pantalla del jugador
 	private boolean cambiosJugador1 = false;
 	private boolean cambiosJugador2 = false;
@@ -30,6 +29,15 @@ public class Partida {
 	private String nombreJugador2="";
 	
 	
+	
+	
+	
+	public Long getPartidaEnCursoID() {
+		return partidaEnCursoID;
+	}
+	public void setPartidaEnCursoID(Long partidaEnCursoID) {
+		this.partidaEnCursoID = partidaEnCursoID;
+	}
 	public boolean isCambiosJugador1() {
 		return cambiosJugador1;
 	}
@@ -41,12 +49,6 @@ public class Partida {
 	}
 	public void setCambiosJugador2(boolean cambiosJugador2) {
 		this.cambiosJugador2 = cambiosJugador2;
-	}
-	public Integer getPartidaID() {
-		return this.partidaID;
-	}
-	public void setPartidaID(Integer partidaID) {
-		this.partidaID = partidaID;
 	}
 	public int[] getManoJugador1() {
 		return manoJugador1;
@@ -139,11 +141,11 @@ public class Partida {
 	public void setResultado(int[] resultado) {
 		this.resultado = resultado;
 	}
-	public Long getPartidaEnCursoID() {
-		return partidaEnCursoID;
+	public Integer getPartidaID() {
+		return partidaID;
 	}
-	public void setPartidaEnCursoID(Long partidaEnCursoID) {
-		this.partidaEnCursoID = partidaEnCursoID;
+	public void setPartidaID(Integer partidaID) {
+		this.partidaID = partidaID;
 	}
 	public String getNombreJugador1() {
 		return nombreJugador1;

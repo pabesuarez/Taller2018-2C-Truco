@@ -2,6 +2,7 @@ package ar.edu.unlam.tallerweb1.servicios;
 
 
 import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -202,15 +203,17 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	public Partida nuevaPartida() {
 		Partida partida = new Partida();
 		partida.setEstado(0);
+		partidasEnCurso.add(partida);
+		partida.setPartidaID(partidasEnCurso.indexOf(partida));
 		//agregar la partida a la base de datos
 		PartidaEnCurso partidaEnCurso = new PartidaEnCurso();
 		partidaEnCurso.setEstado(0);
 		partidaEnCurso.setMensaje("prueba");
-		partida.setPartidaEnCursoID(partidaEnCursoDao.nuevaPartida(partidaEnCurso));
+		partidaEnCurso.setIdPartida(partida.getPartidaID());
+		partidaEnCursoDao.nuevaPartida(partidaEnCurso);
 		//opciones
 		partida.setMano(1);
-		partidasEnCurso.add(partida);
-		partida.setPartidaID(partidasEnCurso.indexOf(partida));
+		partida.setPartidaEnCursoID(partidaEnCurso.getId());
 		return partida;
 	}
 	
@@ -256,6 +259,11 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			return 2; // gana el jugador 2
 		}
 	}
-
+	
+	@Override
+	public List<PartidaEnCurso> obtenerPartidasEnCurso() {
+		List<PartidaEnCurso> partidas = partidaEnCursoDao.traerTodasLasPartidasEnProgreso();
+		return partidas;
+	}
 	
 }

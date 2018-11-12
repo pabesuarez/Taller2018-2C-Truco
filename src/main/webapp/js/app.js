@@ -345,4 +345,3 @@ var sources = {
 loadImages(sources, function(images) {
     draw(images);
 });
-
