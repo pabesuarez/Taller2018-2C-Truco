@@ -8,4 +8,6 @@ public interface UsuarioDao {
 	public Usuario buscarPorId (Long usuarioId);
 	public void nuevoUsuario (Usuario usuario);
 	public Usuario login(String nombre, String pass);
+	Usuario consultarUsuario(Usuario usuario);
+	void save(Usuario usuario);
 }

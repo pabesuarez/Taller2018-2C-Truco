@@ -12,8 +12,10 @@
 		
 	<div style="text-align: center" class="alert alert-success">
 		<h1>${aviso}</h1>
+		</div>
+	<div style="text-align: center" class="alert alert-danger">	
+		<h1>${aviso1}</h1>
 	</div>
-	</div>
-	
+	     </div>
 	</jsp:attribute>
 </t:default>

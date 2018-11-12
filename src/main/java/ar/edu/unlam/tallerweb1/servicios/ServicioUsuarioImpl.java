@@ -29,5 +29,16 @@ public class ServicioUsuarioImpl implements ServicioUsuario {
 	public void nuevoUsuario(Usuario usuario) {
 		servicioUsuarioDao.nuevoUsuario(usuario);
 	}
+	
+	@Override
+	public Usuario consultarUsuario(Usuario usuario) {
+		return servicioUsuarioDao.consultarUsuario(usuario);
+	}
+	
+	@Override
+	public void guardarUsuario(Usuario usuario) {
+		servicioUsuarioDao.save(usuario);
+		
+	}
 
 }

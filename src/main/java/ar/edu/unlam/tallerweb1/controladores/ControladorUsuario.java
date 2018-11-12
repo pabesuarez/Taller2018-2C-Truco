@@ -61,11 +61,16 @@ public class ControladorUsuario {
 	public ModelAndView irAValidarMascota(@ModelAttribute ("usuario") Usuario usuario,HttpServletRequest request) {
 		
 		ModelMap modelo = new ModelMap();
-		modelo.put("mascota", modelo);
-		servicioUsuario.nuevoUsuario(usuario);
-		modelo.put("aviso", "Se CREO exitosamente");
 		
+		if(servicioUsuario.consultarUsuario(usuario) == null) {
+			servicioUsuario.guardarUsuario(usuario);
+			modelo.put("aviso", "Se Creo Usuario Correctamente");
+		}
+		else {
+			modelo.put("aviso1", "El Usuario ya Existe");
+			}
 		
-	return new ModelAndView("correcto",modelo);
-	}
+	return new ModelAndView("alerta",modelo);
+	
+     }
 }
