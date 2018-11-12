@@ -9,7 +9,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
-import ar.edu.unlam.tallerweb1.modelo.Partida;
+
 import ar.edu.unlam.tallerweb1.modelo.PartidaEnCurso;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 
@@ -28,10 +28,9 @@ public class PartidaEnCursoDaoImpl implements PartidaEnCursoDao {
 	}
 	
 	@Override
-	public Long nuevaPartida(PartidaEnCurso partida) {
+	public void nuevaPartida(PartidaEnCurso partida) {
 		final Session session = sessionFactory.getCurrentSession();
 		session.save(partida);
-		return partida.getId();
 	}
 
 	@Override

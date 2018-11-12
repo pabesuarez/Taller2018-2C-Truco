@@ -17,6 +17,7 @@ public class PartidaEnCurso {
 	private Usuario jugador2;
 	private String mensaje;
 	private Integer estado;
+	private Integer idPartida;
 	
 	public Long getId() {
 		return id;
@@ -47,6 +48,12 @@ public class PartidaEnCurso {
 	}
 	public void setEstado(Integer estado) {
 		this.estado = estado;
+	}
+	public Integer getIdPartida() {
+		return idPartida;
+	}
+	public void setIdPartida(Integer idPartida) {
+		this.idPartida = idPartida;
 	}
 	
 	

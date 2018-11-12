@@ -6,8 +6,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -205,15 +203,17 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	public Partida nuevaPartida() {
 		Partida partida = new Partida();
 		partida.setEstado(0);
+		partidasEnCurso.add(partida);
+		partida.setPartidaID(partidasEnCurso.indexOf(partida));
 		//agregar la partida a la base de datos
 		PartidaEnCurso partidaEnCurso = new PartidaEnCurso();
 		partidaEnCurso.setEstado(0);
 		partidaEnCurso.setMensaje("prueba");
-		partida.setPartidaEnCursoID(partidaEnCursoDao.nuevaPartida(partidaEnCurso));
+		partidaEnCurso.setIdPartida(partida.getPartidaID());
+		partidaEnCursoDao.nuevaPartida(partidaEnCurso);
 		//opciones
 		partida.setMano(1);
-		partidasEnCurso.add(partida);
-		partida.setPartidaID(partidasEnCurso.indexOf(partida));
+		partida.setPartidaEnCursoID(partidaEnCurso.getId());
 		return partida;
 	}
 	
