@@ -18,9 +18,10 @@
 			<div class="row">
 				<div class="col-md-12 header">
 					<img style="height:60px" src ="${url}/img/logo.png"/>
-					<span class="ml-5">logeado como: ${sessionScope.usuarioNombre}</span>
-					<a class="ml-5" href="${url}/registro">Registrarse &nbsp;&nbsp;</a>
-					<a href="${url}/login">Login</a>
+					<span class="ml-3">logeado como: ${sessionScope.usuarioNombre}</span>
+					<a class="ml-3" href="${url}/registro">Registrarse</a>
+					<a class="ml-3" href="${url}/login">Login</a>
+					<a class="ml-3" href="${url}/login">Logout</a>
 				</div>
 			</div>
 			<div class="row">

@@ -73,4 +73,10 @@ public class ControladorUsuario {
 	return new ModelAndView("alerta",modelo);
 	
      }
+	
+	@RequestMapping("cerrarSession")
+	public ModelAndView cerrarSession(HttpServletRequest request) {
+			request.getSession().setAttribute("id", null);
+			return new ModelAndView("redirect:/login");
+		}
 }
