@@ -3,6 +3,7 @@ package ar.edu.unlam.tallerweb1.servicios;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import javax.inject.Inject;
 
@@ -38,6 +39,9 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		partida.setResultado(new int[] {0,0,0});
 		//reiniciar la ronda
 		partida.setRonda(0);
+		//reiniciar estado de truco
+		partida.setPuntosPorTruco(0);
+		partida.setJugadorTruco(0);
 		//refrescar la pantalla de ambos jugadores
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
@@ -105,12 +109,14 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	@Override
 	public void tirarCarta(Partida partida, Integer jugador, Integer carta) {
 		// si un jugador tira una carta en su turno se aplica el cambio y cambia de turno
-		if(jugador==1 && partida.getTurno() == 1) {
+		if(jugador==1 && partida.getTurno() == 1 && partida.getEstado() == 2 && !IntStream.of(partida.getCartasEnJuego1()).anyMatch(x -> x == carta)) {
 			partida.setCartaJuego1(partida.getRonda(),carta);
 			partida.setTurno(2);
-		}else if (jugador==2 && partida.getTurno() == 2) {
+		}else if (jugador==2 && partida.getTurno() == 2 && partida.getEstado() == 2 && !IntStream.of(partida.getCartasEnJuego2()).anyMatch(x -> x == carta)) {
 			partida.setCartaJuego2(partida.getRonda(), carta);
 			partida.setTurno(1);
+		}else {
+			return;
 		}
 		//revisar que cartas hay en mesa
 		Integer carta1 = partida.getCartaJuego1(partida.getRonda());
@@ -121,25 +127,25 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			partida.setResultado(partida.getRonda(),resultado);
 			//si era la ultima carta de la ronda se concluye la mano
 			if(partida.getRonda() == 2) {
-				concluirMano(partida);
+				concluirMano(partida,0);
 				return;
 			} else {
 				//verificacion en la segunda ronda
 				if(partida.getRonda() == 1) {
 					//si la ronda anterior fue parda y la actual tuvo ganador se termina la ronda
 					if(partida.getResultado(partida.getRonda()-1) == 3 && resultado != 3) {
-						concluirMano(partida);
+						concluirMano(partida,0);
 						return;
 					}
 					//si la ronda anterior no fue parda y la actual si lo fue se termina la ronda
 					if(partida.getResultado(partida.getRonda()-1) != 3 && resultado == 3) {
-						concluirMano(partida);
+						concluirMano(partida,0);
 						return;
 					}
 				}
 				//si era la segunda ronda y el ganador fue el mismo jugador se termina la ronda
 				if (partida.getRonda() == 1 && partida.getResultado(0) == partida.getResultado(1)) {
-					concluirMano(partida);
+					concluirMano(partida,0);
 					return;
 				}
 				
@@ -156,24 +162,40 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	}
 
 	@Override
-	public Integer concluirMano(Partida partida) {
-		Integer total1=0;
-		Integer total2=0;
-		
-		for (Integer i=0;i<=2;i++) {
-			if(partida.getResultado(i) == 1 ) {
-				total1+=1;
-			}else if (partida.getResultado(i) == 2 ) {
-				total2+=1;
+	public void sumarPuntaje(Partida partida, Integer jugador) {
+		if (jugador == 0) {
+			jugador = partida.getMano();
+		}
+		if (jugador == 1) {
+			partida.setPuntajeJugador1(partida.getPuntajeJugador1()+1+partida.getPuntosPorTruco());
+		}else{
+			partida.setPuntajeJugador2(partida.getPuntajeJugador2()+1+partida.getPuntosPorTruco());
+		}
+		//PENDIENTE: sumar puntos por envido
+	}
+	
+	@Override
+	public Integer concluirMano(Partida partida, Integer ganador) {
+		if (ganador==0) {
+			Integer total1=0;
+			Integer total2=0;
+			
+			for (Integer i=0;i<=2;i++) {
+				if(partida.getResultado(i) == 1 ) {
+					total1+=1;
+				}else if (partida.getResultado(i) == 2 ) {
+					total2+=1;
+				}
+			}
+			// si gana el jugador 1
+			if (total1>total2){
+				ganador=1;
+			//si gana el jugador 2
+			}else if (total1<total2){
+				ganador=2;
 			}
 		}
-		// si gana el jugador 1
-		if (total1>total2){
-			partida.setPuntajeJugador1(partida.getPuntajeJugador1()+1);
-		//si gana el jugador 2
-		}else if (total1<total2){
-			partida.setPuntajeJugador2(partida.getPuntajeJugador2()+1);
-		}
+		sumarPuntaje(partida,ganador);
 		partida.setEstado(9);
 		partida.setTurno(0);
 		partida.setCambiosJugador1(true);
@@ -189,7 +211,6 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		partida.setTurno(1);
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
-		// PENDIENTE: Aplicar el puntaje acumulado y resetear partida para la siguiente mano
 		return null;
 	}
 
@@ -264,6 +285,37 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	public List<PartidaEnCurso> obtenerPartidasEnCurso() {
 		List<PartidaEnCurso> partidas = partidaEnCursoDao.traerTodasLasPartidasEnProgreso();
 		return partidas;
+	}
+
+	@Override
+	public void cantarTruco(Partida partida, Integer jugador) {
+		if (partida.getJugadorTruco() != jugador && partida.getPuntosPorTruco() != 3 && (partida.getEstado() !=2 || partida.getEstado() !=3 )) {
+			partida.setEstado(3);
+			partida.setPuntosPorTruco(partida.getPuntosPorTruco()+1);
+			partida.setJugadorTruco(jugador);
+			partida.setCambiosJugador1(true);
+			partida.setCambiosJugador2(true);
+		}
+	}
+
+	@Override
+	public void quiero(Partida partida, Integer jugador) {
+		if (partida.getEstado() == 3 && jugador != partida.getJugadorTruco()) {
+			partida.setEstado(2);
+			partida.setCambiosJugador1(true);
+			partida.setCambiosJugador2(true);
+		}
+	}
+	
+	public void noQuiero(Partida partida, Integer jugador) {
+		if (partida.getEstado() == 3 && jugador != partida.getJugadorTruco()) {
+			partida.setPuntosPorTruco(partida.getPuntosPorTruco()-1);
+			if (jugador==1) {
+				concluirMano(partida, 2);
+			}else {
+				concluirMano(partida ,1);
+			}
+		}
 	}
 	
 }

@@ -12,8 +12,12 @@ public interface ServicioPartida {
 	public void repartirCartas(Partida partida);
 	public Integer obtenerValor(Integer carta);
 	public Integer compararValor(Integer carta1,Integer carta2);
+	public void sumarPuntaje(Partida partida, Integer jugador);
 	public void tirarCarta(Partida partida, Integer jugador,Integer carta);
-	public Integer concluirMano(Partida partida);
+	public void cantarTruco(Partida partida, Integer jugador);
+	public void quiero(Partida partida, Integer jugador);
+	public void noQuiero(Partida partida, Integer jugador);
+	public Integer concluirMano(Partida partida, Integer ganador);
 	public Partida getPartida(Integer partidaID);
 	public Partida nuevaPartida();
 	public Partida unirseAPartida(Integer partidaID,Long jugadorId);

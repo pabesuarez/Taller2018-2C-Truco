@@ -64,7 +64,13 @@ public class ControladorApp {
 		*/
 		switch(mensaje.getComando()) {
 		case 1:
-			servicioPartida.tirarCarta(partida, jugador, mensaje.getParametro());
+			servicioPartida.tirarCarta(partida, jugador, mensaje.getParametro()); break;
+		case 4:
+			servicioPartida.cantarTruco(partida, jugador); break;
+		case 10:
+			servicioPartida.quiero(partida,jugador); break;
+		case 11:
+			servicioPartida.noQuiero(partida,jugador); break;
 		}
 		return respuesta;
 	}

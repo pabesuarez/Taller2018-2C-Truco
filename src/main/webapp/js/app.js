@@ -20,9 +20,45 @@ $(function(){
 
 
 function truco(){
-	if(turno==jugador){
-		$("#mensajePropio").text("Truco")
-	}
+	var send={}
+	send["partidaID"]=idPartida;
+	send["comando"]=4;
+	send["jugador"]=jugador;
+    $.ajax({
+        type: 'POST',
+        contentType : "application/json",
+        url: proyecto+'/app/comando',
+        datatype: 'json',
+        data: JSON.stringify(send)
+    });
+}
+
+function quiero(){
+	var send={}
+	send["partidaID"]=idPartida;
+	send["comando"]=10;
+	send["jugador"]=jugador;
+    $.ajax({
+        type: 'POST',
+        contentType : "application/json",
+        url: proyecto+'/app/comando',	
+        datatype: 'json',
+        data: JSON.stringify(send)
+    });
+}
+
+function noQuiero(){
+	var send={}
+	send["partidaID"]=idPartida;
+	send["comando"]=11;
+	send["jugador"]=jugador;
+    $.ajax({
+        type: 'POST',
+        contentType : "application/json",
+        url: proyecto+'/app/comando',
+        datatype: 'json',
+        data: JSON.stringify(send)
+    });
 }
 
 function envido(){
@@ -110,6 +146,14 @@ function actualizarPuntaje(njugador,puntaje){
 }
 
 
+function mensajeTruco(truco){
+	switch (truco){
+	case 1: return "Truco"
+	case 2: return "Quiero ReTruco"
+	case 3: return "Quiero Vale 4"
+	}
+}
+
 function actualizar(){
 	
 	var send = {}
@@ -122,9 +166,46 @@ function actualizar(){
         datatype: 'json',
         data: JSON.stringify(send),
         success: function (data) {
+        	
+        	
+        	
         	if(data.partidaID == undefined){
         		setTimeout(function(){ actualizar() },1000);
         	}else{
+        		if (data.puntosPorTruco <3){
+        			$("#btnTruco").text(mensajeTruco(data.puntosPorTruco+1))
+        		}
+        		
+        		switch(data.estado){
+            	case 2:
+            		$("#botones button").show();
+            		if(data.jugadorTruco == jugador || data.puntosPorTruco == 3){
+            			$("#btnTruco").hide();
+            		}
+            		$("#mensajePropio").text("");
+            		$("#mensajeOponente").text("");
+            		$("#btnQuiero").hide();
+        			$("#btnNoQuiero").hide();
+        			break;
+            	case 3:
+            		$("#botones button").hide();
+            		
+            		if (data.jugadorTruco == jugador){
+            			$("#mensajePropio").text(mensajeTruco(data.puntosPorTruco));
+            		}else{
+            			$("#mensajeOponente").text(mensajeTruco(data.puntosPorTruco));
+            			$("#btnQuiero").show();
+            			$("#btnNoQuiero").show();
+            			if (data.puntosPorTruco <3){
+            				$("#btnTruco").show();
+            			}
+            			$("#btnEnvido").show();
+                		$("#btnRealEnvido").show();
+                		$("#btnFaltaEnvido").show();
+            		}
+            		break;
+            	}
+        		
         		console.log(data);
         		if (jugador==1){
 		        	for(i=0;i<=2;i++){
@@ -167,6 +248,7 @@ function actualizar(){
 			        	}
 		        	}		        	
         		}
+        		        		
         		actualizarPuntaje(1,data.puntajeJugador1);
 	        	actualizarPuntaje(2,data.puntajeJugador2);
         		turno=data.turno;

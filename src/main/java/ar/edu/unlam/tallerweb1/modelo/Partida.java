@@ -27,11 +27,22 @@ public class Partida {
 	private int[] resultado;
 	private String nombreJugador1="";
 	private String nombreJugador2="";
+	private Integer puntosPorTruco=0;
+	private Integer jugadorTruco;
 	
 	
-	
-	
-	
+	public Integer getPuntosPorTruco() {
+		return puntosPorTruco;
+	}
+	public void setPuntosPorTruco(Integer puntosPorTruco) {
+		this.puntosPorTruco = puntosPorTruco;
+	}
+	public Integer getJugadorTruco() {
+		return jugadorTruco;
+	}
+	public void setJugadorTruco(Integer jugadorTruco) {
+		this.jugadorTruco = jugadorTruco;
+	}
 	public Long getPartidaEnCursoID() {
 		return partidaEnCursoID;
 	}

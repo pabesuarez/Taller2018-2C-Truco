@@ -11,20 +11,25 @@
 				<div class="col" style="min-width:512px;max-width:512px;">
 					<div id="juego"></div>
 				</div>
-				<div style="height:550px" class="col border">
+				<div id="botones" style="height:512px" class="col border">
 					<div class="row">
-						<span style="height:4rem" id="mensajeOponente" class="border w-100"></span>
+						<span style="height:31px" id="mensajeOponente" class="border w-100"></span>
+					</div>
+					<div class="row" style="height:122px">
+						<div class="col-6"><button id="btnTruco" class="btn btn-success" onclick="truco()">truco</button></div><br>
+						<div class="col-6"><button id="btnMazo" class="btn btn-success" onclick="mazo()">mazo</button></div>
+					</div>
+					<div class="row" style="height:122px">
+						<div class="col-4"><button id="btnEnvido" class="btn btn-success" onclick="envido()">envido</button></div><br>
+						<div class="col-4"><button id="btnRealEnvido" class="btn btn-success" onclick="realEnvido()">real envido</button></div><br>
+						<div class="col-4"><button id="btnFaltaEnvido" class="btn btn-success" onclick="faltaEnvido()">falta envido</button></div>
+					</div>
+					<div class="row" style="height:122px">
+						<div class="col-6"><button id="btnQuiero" class="btn btn-success" onclick="quiero()">Quiero</button></div><br>
+						<div class="col-6"><button id="btnNoQuiero" class="btn btn-success" onclick="noQuiero()">No Quiero</button></div>
 					</div>
 					<div class="row">
-						<div class="col-6"><button class="btn btn-success" onclick="truco()">truco</button></div><br>
-						<br><div class="col-6"><button class="btn btn-success" onclick="envido()">envido</button></div>
-					</div>
-					<div class="row">
-						<div class="col-6"><button class="btn btn-success" onclick="mazo()">mazo</button></div><br>
-						<br><div class="col-6"><button class="btn btn-success" onclick="faltaEnvido()">falta envido</button></div>
-					</div>
-					<div class="row">
-						<span style="height:4rem" id="mensajePropio" class="border w-100"></span>
+						<span style="height:31px" id="mensajePropio" class="border w-100"></span>
 					</div>
 					<div class="row">
 						<span style="height:2rem" id="estado" class="border w-100"></span>
