@@ -18,12 +18,16 @@ import ar.edu.unlam.tallerweb1.modelo.Mensaje;
 import ar.edu.unlam.tallerweb1.modelo.Partida;
 import ar.edu.unlam.tallerweb1.modelo.PartidaEnCurso;
 import ar.edu.unlam.tallerweb1.servicios.ServicioPartida;
+import ar.edu.unlam.tallerweb1.servicios.ServicioTanto;
 
 @Controller
 public class ControladorApp {
 	
 	@Inject
 	private ServicioPartida servicioPartida;
+	
+	@Inject
+	private ServicioTanto servicioTanto;
 	
 	// mientras no sea el turno del jugador, este constantemente estara llamando a esta funcion, en caso de haber un nuevo cambio, se le notificara al jugador
 	@ResponseBody
@@ -57,19 +61,28 @@ public class ControladorApp {
 			segun el numero enviado como comando por el cliente se realizaran distintas acciones
 			1: tirar carta (parametro: que carta tiro)
 			2: cantar envido
-			3: falta envido
+			3: cantar real envido
 			4: cantar truco/retruco/vale4
+			5: cantar falta envido
 			10: respuesta positiva (quiero / cantar envido)
 			11: respuesta negativa (no quiero / son buenas)
 		*/
 		switch(mensaje.getComando()) {
 		case 1:
 			servicioPartida.tirarCarta(partida, jugador, mensaje.getParametro()); break;
+		case 2: case 3:	case 5:
+			servicioTanto.cantarTanto(partida, jugador, mensaje.getComando()); break;
 		case 4:
 			servicioPartida.cantarTruco(partida, jugador); break;
 		case 10:
+			if(partida.getEstado() == 4) {
+				servicioTanto.cantarTanto(partida, jugador, mensaje.getComando());	break;
+			}
 			servicioPartida.quiero(partida,jugador); break;
 		case 11:
+			if(partida.getEstado() == 4) {
+				servicioTanto.cantarTanto(partida, jugador, mensaje.getComando());	break;
+			}
 			servicioPartida.noQuiero(partida,jugador); break;
 		}
 		return respuesta;

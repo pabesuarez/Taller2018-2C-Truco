@@ -29,6 +29,9 @@ public class Partida {
 	private String nombreJugador2="";
 	private Integer puntosPorTruco=0;
 	private Integer jugadorTruco;
+	private Integer puntosPorTanto = new Integer(0);			//Puntaje a sumar al finalizar la ronda
+	private Integer jugadorTanto = new Integer(0);				//Quien canta el ultimo tanto	
+	private Integer tanto = new Integer(0);						//Tipo de Tanto
 	
 	
 	public Integer getPuntosPorTruco() {
@@ -169,6 +172,24 @@ public class Partida {
 	}
 	public void setNombreJugador2(String nombreJugador2) {
 		this.nombreJugador2 = nombreJugador2;
+	}
+	public Integer getPuntosPorTanto() {
+		return puntosPorTanto;
+	}
+	public void setPuntosPorTanto(Integer puntosPorTanto) {
+		this.puntosPorTanto = puntosPorTanto;
+	}
+	public Integer getJugadorTanto() {
+		return jugadorTanto;
+	}
+	public void setJugadorTanto(Integer jugadorTanto) {
+		this.jugadorTanto = jugadorTanto;
+	}
+	public Integer getTanto() {
+		return tanto;
+	}
+	public void setTanto(Integer tanto) {
+		this.tanto = tanto;
 	}
 	
 }
