@@ -15,6 +15,7 @@ public interface ServicioPartida {
 	public void sumarPuntaje(Partida partida, Integer jugador);
 	public void tirarCarta(Partida partida, Integer jugador,Integer carta);
 	public void cantarTruco(Partida partida, Integer jugador);
+	public void cantarEnvido(Partida partida, Integer jugador, Integer tipo);
 	public void quiero(Partida partida, Integer jugador);
 	public void noQuiero(Partida partida, Integer jugador);
 	public Integer concluirMano(Partida partida, Integer ganador);
@@ -22,4 +23,5 @@ public interface ServicioPartida {
 	public Partida nuevaPartida();
 	public Partida unirseAPartida(Integer partidaID,Long jugadorId);
 	public List<PartidaEnCurso> obtenerPartidasEnCurso();
+	public Integer getOponente(Integer jugador);
 }

@@ -21,6 +21,9 @@ import ar.edu.unlam.tallerweb1.modelo.Usuario;
 public class ServicioPartidaImpl implements ServicioPartida{
 
 	@Inject
+	private ServicioTanto servicioTanto;
+	
+	@Inject
 	private PartidaEnCursoDao partidaEnCursoDao;
 	
 	@Inject
@@ -39,6 +42,11 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		partida.setResultado(new int[] {0,0,0});
 		//reiniciar la ronda
 		partida.setRonda(0);
+		//reiniciar estado de envido
+		partida.setGanadorTanto(0);
+		partida.setJugadorTanto(0);
+		partida.setPuntosPorTanto(0);
+		partida.setTipoTanto(0);
 		//reiniciar estado de truco
 		partida.setPuntosPorTruco(0);
 		partida.setJugadorTruco(0);
@@ -171,7 +179,12 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		}else{
 			partida.setPuntajeJugador2(partida.getPuntajeJugador2()+1+partida.getPuntosPorTruco());
 		}
-		//PENDIENTE: sumar puntos por envido
+		
+		if (partida.getGanadorTanto() == 1) {
+			partida.setPuntajeJugador1(partida.getPuntajeJugador1()+partida.getPuntosPorTanto());
+		}else if (partida.getGanadorTanto() == 2){
+			partida.setPuntajeJugador2(partida.getPuntajeJugador2()+partida.getPuntosPorTanto());
+		}
 	}
 	
 	@Override
@@ -290,17 +303,55 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	@Override
 	public void cantarTruco(Partida partida, Integer jugador) {
 		if (partida.getJugadorTruco() != jugador && partida.getPuntosPorTruco() != 3 && (partida.getEstado() !=2 || partida.getEstado() !=3 )) {
+			if (partida.getPuntosPorTruco() != 0 && partida.getGanadorTanto() == 0) {
+				partida.setGanadorTanto(3);
+			}
 			partida.setEstado(3);
 			partida.setPuntosPorTruco(partida.getPuntosPorTruco()+1);
 			partida.setJugadorTruco(jugador);
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
+			
+		}
+	}
+	
+	@Override
+	public void cantarEnvido(Partida partida, Integer jugador, Integer comando) {
+		boolean truco = (partida.getEstado() == 3 && jugador != partida.getJugadorTruco());
+		Integer tipo=0;
+		switch(comando) {
+		case 2: tipo=1; break;
+		case 3: tipo=2; break;
+		case 5: tipo=3; break;
+		}
+		if (partida.getGanadorTanto() == 0) {
+			if ((partida.getEstado() == 2 && jugador == partida.getTurno()) || (partida.getEstado() == 4 && jugador != partida.getJugadorTanto()) || truco ) {
+				if (truco) {
+					partida.setJugadorTruco(0);
+					partida.setPuntosPorTruco(0);
+				}
+				partida.setJugadorTanto(jugador);
+				partida.setTipoTanto(servicioTanto.calcularTipoTanto(partida.getTipoTanto(),tipo));
+				partida.setEstado(4);
+				partida.setCambiosJugador1(true);
+				partida.setCambiosJugador2(true);
+			}
 		}
 	}
 
 	@Override
 	public void quiero(Partida partida, Integer jugador) {
 		if (partida.getEstado() == 3 && jugador != partida.getJugadorTruco()) {
+			partida.setEstado(2);
+			partida.setCambiosJugador1(true);
+			partida.setCambiosJugador2(true);
+		}else if(partida.getEstado() == 4 && jugador != partida.getJugadorTanto()) {
+			partida.setEstado(5);
+			partida.setCambiosJugador1(true);
+			partida.setCambiosJugador2(true);
+		}else if(partida.getEstado() == 5 && jugador == partida.getJugadorTanto()) {
+			partida.setGanadorTanto(servicioTanto.compararTanto(partida));
+			partida.setPuntosPorTanto(servicioTanto.calcularValorTanto(partida.getTipoTanto(), true));
 			partida.setEstado(2);
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
@@ -315,7 +366,33 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			}else {
 				concluirMano(partida ,1);
 			}
+		}else if(partida.getEstado() == 4 && jugador != partida.getJugadorTanto()) {
+			partida.setGanadorTanto(3);
+			if(jugador == 1) {
+				partida.setPuntajeJugador1(partida.getPuntajeJugador1()+servicioTanto.calcularValorTanto(partida.getTipoTanto(), false));
+			}else {
+				partida.setPuntajeJugador2(partida.getPuntajeJugador2()+servicioTanto.calcularValorTanto(partida.getTipoTanto(), false));
+			}
+			partida.setEstado(2);
+			partida.setCambiosJugador1(true);
+			partida.setCambiosJugador2(true);
+		}else if(partida.getEstado() == 5 && jugador == partida.getJugadorTanto()) {
+			partida.setGanadorTanto(getOponente(jugador));
+			partida.setPuntosPorTanto(servicioTanto.calcularValorTanto(partida.getTipoTanto(), true));
+			partida.setEstado(2);
+			partida.setCambiosJugador1(true);
+			partida.setCambiosJugador2(true);
 		}
 	}
+
+	@Override
+	public Integer getOponente(Integer jugador) {
+		if(jugador == 1) {
+			return 2;
+		}else {
+			return 1;
+		}
+	}
+	
 	
 }

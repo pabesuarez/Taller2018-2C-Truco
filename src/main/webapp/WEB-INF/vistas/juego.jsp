@@ -16,17 +16,17 @@
 						<span style="height:31px" id="mensajeOponente" class="border w-100"></span>
 					</div>
 					<div class="row" style="height:122px">
-						<div class="col-6"><button id="btnTruco" class="btn btn-success" onclick="truco()">truco</button></div><br>
+						<div class="col-6"><button id="btnTruco" class="btn btn-success" onclick="comando(4)">truco</button></div><br>
 						<div class="col-6"><button id="btnMazo" class="btn btn-success" onclick="mazo()">mazo</button></div>
 					</div>
 					<div class="row" style="height:122px">
-						<div class="col-4"><button id="btnEnvido" class="btn btn-success" onclick="envido()">envido</button></div><br>
-						<div class="col-4"><button id="btnRealEnvido" class="btn btn-success" onclick="realEnvido()">real envido</button></div><br>
-						<div class="col-4"><button id="btnFaltaEnvido" class="btn btn-success" onclick="faltaEnvido()">falta envido</button></div>
+						<div class="col-4"><button id="btnEnvido" class="btn btn-success" onclick="comando(2)">envido</button></div><br>
+						<div class="col-4"><button id="btnRealEnvido" class="btn btn-success" onclick="comando(3)">real envido</button></div><br>
+						<div class="col-4"><button id="btnFaltaEnvido" class="btn btn-success" onclick="comando(5)">falta envido</button></div>
 					</div>
 					<div class="row" style="height:122px">
-						<div class="col-6"><button id="btnQuiero" class="btn btn-success" onclick="quiero()">Quiero</button></div><br>
-						<div class="col-6"><button id="btnNoQuiero" class="btn btn-success" onclick="noQuiero()">No Quiero</button></div>
+						<div class="col-6"><button id="btnQuiero" class="btn btn-success" onclick="comando(10)">Quiero</button></div><br>
+						<div class="col-6"><button id="btnNoQuiero" class="btn btn-success" onclick="comando(11)">No Quiero</button></div>
 					</div>
 					<div class="row">
 						<span style="height:31px" id="mensajePropio" class="border w-100"></span>

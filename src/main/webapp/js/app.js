@@ -11,6 +11,8 @@ var puntajeJ1 = []
 var puntajeJ2 = []
 var nombre1;
 var nombre2;
+var envido = 0;
+var envidoOponente = 0;
 
 var layer = new Konva.Layer();
 
@@ -19,10 +21,61 @@ $(function(){
 });
 
 
-function truco(){
+function calcularEnvido(cartas){
+	var caso = 0;
+	var mano = [].slice.call(cartas)
+	if( Math.floor(mano[0]/10) == Math.floor(mano[1]/10) && Math.floor(mano[0]/10) == Math.floor(mano[2]/10)) {
+		caso = 1;
+	}else if(Math.floor(mano[0]/10) == Math.floor(mano[1]/10)) {
+		caso = 3;
+	}else if(Math.floor(mano[1]/10) == Math.floor(mano[2]/10)) {
+		caso = 2;
+	}
+	
+	for(i=0;i<=2;i++){
+		if ((mano[i]%10)<=6){
+			mano[i]=(mano[i]%10)+1;
+		}else{
+			
+			mano[i]=0
+		}
+	}
+	
+	switch (caso) {
+		case 1:
+			mano.sort(function(a, b){return a-b});
+			console.log("caso1:" + (20 + mano[1] + mano[2]));
+			return 20 + mano[1] + mano[2];
+			break;
+		case 2:
+			console.log("caso2:" + (20 + mano[1] + mano[2]));
+			return 20 + mano[1] + mano[2];
+			break;
+		case 3:
+			console.log("caso3:" + (20 + mano[0] + mano[1]));
+			return 20 + mano[0] + mano[1];
+			break;
+		default:
+			console.log("caso0:"+ mano[2]);
+			mano.sort(function(a, b){return a-b});
+			return mano[2];
+			break;
+	}
+}
+
+
+function getOponente(){
+	if (jugador == 1) {
+		return 2;
+	}else{
+		return 1;
+	}
+}
+
+function comando(tipo){
 	var send={}
 	send["partidaID"]=idPartida;
-	send["comando"]=4;
+	send["comando"]=tipo;
 	send["jugador"]=jugador;
     $.ajax({
         type: 'POST',
@@ -31,56 +84,11 @@ function truco(){
         datatype: 'json',
         data: JSON.stringify(send)
     });
-}
-
-function quiero(){
-	var send={}
-	send["partidaID"]=idPartida;
-	send["comando"]=10;
-	send["jugador"]=jugador;
-    $.ajax({
-        type: 'POST',
-        contentType : "application/json",
-        url: proyecto+'/app/comando',	
-        datatype: 'json',
-        data: JSON.stringify(send)
-    });
-}
-
-function noQuiero(){
-	var send={}
-	send["partidaID"]=idPartida;
-	send["comando"]=11;
-	send["jugador"]=jugador;
-    $.ajax({
-        type: 'POST',
-        contentType : "application/json",
-        url: proyecto+'/app/comando',
-        datatype: 'json',
-        data: JSON.stringify(send)
-    });
-}
-
-function envido(){
-	if(turno==jugador){
-		$("#mensajePropio").text("Envido")
-	}
-}
-
-function mazo(){
-	if(turno==jugador){
-		$("#mensajePropio").text("Me voy al mazo")
-	}
-}
-
-function faltaEnvido(){
-	if(turno==jugador){
-		$("#mensajePropio").text("Falta envido")
-	}
 }
 
 function refresh(){
 	layer.draw();
+	
 	switch(estado){
 	case 2:
 		if(turno==jugador){
@@ -154,6 +162,18 @@ function mensajeTruco(truco){
 	}
 }
 
+function mensajeEnvido(tipo){
+	switch(tipo){
+	case 1,4:
+	return "envido";
+	case 2,5,8:
+	return "real envido";
+	case 3,6,7,9,10,11:
+	return "falta envido";
+	}
+	return "";
+}
+
 function actualizar(){
 	
 	var send = {}
@@ -176,12 +196,24 @@ function actualizar(){
         			$("#btnTruco").text(mensajeTruco(data.puntosPorTruco+1))
         		}
         		
+        		if (data.estado != 5){
+        			$("btnQuiero").text("Quiero")
+        			$("btnNoQuiero").text("No Quiero")
+        		}
+        		
+        		
         		switch(data.estado){
             	case 2:
             		$("#botones button").show();
             		if(data.jugadorTruco == jugador || data.puntosPorTruco == 3){
             			$("#btnTruco").hide();
             		}
+            		if(data.ganadorTanto != 0 || data.turno != jugador){
+            			$("btnEnvido").hide();
+            			$("btnRealEnvido").hide();
+            			$("btnFaltaEnvido").hide();
+            		}
+            		
             		$("#mensajePropio").text("");
             		$("#mensajeOponente").text("");
             		$("#btnQuiero").hide();
@@ -199,15 +231,54 @@ function actualizar(){
             			if (data.puntosPorTruco <3){
             				$("#btnTruco").show();
             			}
-            			$("#btnEnvido").show();
-                		$("#btnRealEnvido").show();
-                		$("#btnFaltaEnvido").show();
+            			if(data.ganadorTanto == 0){
+	            			$("#btnEnvido").show();
+	                		$("#btnRealEnvido").show();
+	                		$("#btnFaltaEnvido").show();
+            			}
             		}
             		break;
+            	case 4:
+            		$("#botones button").hide();
+            		if (data.jugadorTanto == jugador){
+            			$("#mensajePropio").text(mensajeEnvido(data.tipoTanto));
+            		}else{
+            			$("#mensajeOponente").text(mensajeEnvido(data.tipoTanto));
+            			switch(data.tipoTanto){
+            			case 1:
+            				$("#btnEnvido").show();
+            				$("#btnRealEnvido").show();
+	                		$("#btnFaltaEnvido").show();
+	                		break;
+            			case 4:
+            				$("#btnRealEnvido").show();
+	                		$("#btnFaltaEnvido").show();
+            			case 2,5:
+            				$("#btnFaltaEnvido").show(); break;
+            			}
+            			$("#btnQuiero").show();
+            			$("#btnNoQuiero").show();
+            		}
+            		break;
+            	case 5:
+            		$("#botones button").hide();
+            		if (data.jugadorTanto != jugador){
+            			$("#mensajePropio").text("Quiero, "+envido);
+            		}else{
+            			$("#mensajeOponente").text("Quiero, "+envidoOponente);
+            			$("#btnQuiero").text(envido);
+            			$("#btnNoQuiero").text("Son buenas");
+            			$("#btnQuiero").show();
+            			$("#btnNoQuiero").show();
+            		}
             	}
         		
         		console.log(data);
+        		
+        		
         		if (jugador==1){
+        			envido = calcularEnvido([data.manoJugador1[0],data.manoJugador1[1],data.manoJugador1[2]])
+        			envidoOponente = calcularEnvido([data.manoJugador2[0],data.manoJugador2[1],data.manoJugador2[2]])
 		        	for(i=0;i<=2;i++){
 			        	dibujar(cartasPropias[i],data.manoJugador1[i]);
 			        	dibujar(cartasOponente[i],40);
@@ -228,6 +299,8 @@ function actualizar(){
 			        	}
 		        	}
         		}else{
+        			envido = calcularEnvido([data.manoJugador2[0],data.manoJugador2[1],data.manoJugador2[2]])
+        			envidoOponente = calcularEnvido([data.manoJugador1[0],data.manoJugador1[1],data.manoJugador1[2]])
 		        	for(i=0;i<=2;i++){
 			        	dibujar(cartasPropias[i],data.manoJugador2[i]);
 			        	dibujar(cartasOponente[i],40);

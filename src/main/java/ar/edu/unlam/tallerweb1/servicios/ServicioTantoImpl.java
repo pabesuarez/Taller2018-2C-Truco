@@ -59,63 +59,77 @@ public class ServicioTantoImpl implements ServicioTanto {
 	}
 	
 	
-	@Override
-	public void cantarTanto(Partida partida, Integer jugador, Integer comando) {
 		/*
 		Cod Tipo | Tanto Si | Tanto No
-		2 E		2	1
-		3 R		3	1
-		5 F		*	1
+		1 E			2			1
+		2 R			3			1
+		3 F			*			1
 		
-		06 E/E		4	2
-		07 E/R		5	2
-		08 E/F		*	2
-		09 R/F		*	3
+		04 E/E		4			2
+		05 E/R		5			2
+		06 E/F		*			2
+		07 R/F		*			3
 		
-		10 E/E/R	7	4
-		11 E/E/F	*	4
-		12 E/R/F	*	5
-		13 E/E/R/F	*	7
-		
-		* 2 < 15 Ganador gana el partido. 
-		* 1 >= 15 Ganador los puntos que le falte al que va primero para ganar.
+		08 E/E/R	7			4
+		09 E/E/F	*			4
+		10 E/R/F	*			5
+		11 E/E/R/F	*			7
+
 		*/
-		
-		if(jugador >= partida.getJugadorTanto()) {
-			if(partida.getTanto() == 0) {
-				partida.setEstado(4);
-				partida.setTanto(comando);
-				return;
-			} else {
-				if(comando == 2 && partida.getTanto() ==  2) { partida.setTanto(6); partida.setJugadorTanto(jugador); return;}
-				if(comando == 3 && partida.getTanto() ==  2) { partida.setTanto(7); partida.setJugadorTanto(jugador); return;}
-				if(comando == 5 && partida.getTanto() ==  2) { partida.setTanto(8); partida.setJugadorTanto(jugador); return;}
-				if(comando == 5 && partida.getTanto() ==  3) { partida.setTanto(9); partida.setJugadorTanto(jugador); return;}
-				
-				if(comando == 3 && partida.getTanto() ==  6) { partida.setTanto(10); partida.setJugadorTanto(jugador); return;}
-				if(comando == 5 && partida.getTanto() ==  6) { partida.setTanto(11); partida.setJugadorTanto(jugador); return;}
-				if(comando == 5 && partida.getTanto() ==  7) { partida.setTanto(12); partida.setJugadorTanto(jugador); return;}
-				if(comando == 5 && partida.getTanto() == 10) { partida.setTanto(13); partida.setJugadorTanto(jugador); return;}
-				
-				if(partida.getTanto() == 2) {partida.setPuntosPorTanto(comando == 10 ? 2 : 1);} else {
-				if(partida.getTanto() == 3) {partida.setPuntosPorTanto(comando == 10 ? 3 : 1);} else {
-				if(partida.getTanto() == 5) {partida.setPuntosPorTanto(comando == 10 ? 30 : 1);} else {
-				if(partida.getTanto() == 6) {partida.setPuntosPorTanto(comando == 10 ? 4 : 2);} else {
-				if(partida.getTanto() == 7) {partida.setPuntosPorTanto(comando == 10 ? 5 : 2);} else {
-				if(partida.getTanto() == 8) {partida.setPuntosPorTanto(comando == 10 ? 30 : 2);} else {
-				if(partida.getTanto() == 9) {partida.setPuntosPorTanto(comando == 10 ? 30 : 3);} else {
-				if(partida.getTanto() == 10) {partida.setPuntosPorTanto(comando == 10 ? 7 : 4);} else {
-				if(partida.getTanto() == 11) {partida.setPuntosPorTanto(comando == 10 ? 30 : 4);} else {
-				if(partida.getTanto() == 12) {partida.setPuntosPorTanto(comando == 10 ? 30 : 5);} else {
-				if(partida.getTanto() == 6) {partida.setPuntosPorTanto(comando == 10 ? 30 : 7);}}}}}}}}}}}
-				
-				partida.setEstado(2);
-				partida.setCambiosJugador1(true);
-				partida.setCambiosJugador2(true);
+
+
+	@Override
+	public Integer calcularTipoTanto(Integer tipoActual, Integer tipo) {
+		switch(tipoActual) {
+		case 0: return tipo;
+		case 1:
+			switch(tipo) {
+			case 1: return 4;
+			case 2: return 5;
+			case 3: return 6;
+			}
+		case 2:
+			if (tipo == 3) return 7;
+			break;
+		case 4:
+			if (tipo == 2) { 
+				return 8;
+			}else if (tipo == 3) {
+				return 9;
+			}
+			break;
+		case 5:
+			if (tipo == 3) return 10;
+			break;
+		case 8:
+			if (tipo == 3) return 11;
+			break;
+		}
+		return tipoActual;
+	}
+
+	@Override
+	public Integer calcularValorTanto(Integer tipo, boolean respuesta) {
+		if (respuesta) {
+			switch(tipo) {
+			case 1: return 2;
+			case 2: return 3;
+			case 4: return 4;
+			case 5: return 5;
+			case 8: return 7;
+			case 3: case 6: case 7: case 9: case 10: case 11: 
+				return 30;
+			}
+			return 0;
+		}else {
+			if(tipo <= 3) {
+				return 1;
+			}else if (tipo <=7) {
+				return 2;
+			}else {
+				return 3;
 			}
 		}
-		
-		return;
 	}
 
 }

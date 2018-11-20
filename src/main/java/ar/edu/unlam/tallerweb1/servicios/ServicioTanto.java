@@ -6,6 +6,7 @@ public interface ServicioTanto {
 	
 	public Integer compararTanto(Partida partida);
 	public int obtenerTantoDeLaMano(int[] mano);
-	public void cantarTanto(Partida partida, Integer jugador, Integer comando);
-
+	public Integer calcularTipoTanto(Integer tipoActual, Integer tipo);
+	public Integer calcularValorTanto(Integer tipo, boolean respuesta);
+	
 }
