@@ -322,14 +322,14 @@ function actualizar(){
 			        		dibujar(cartasMesaOponente[i],41);
 			        	}
 		        	}		       
-		        	turno=data.turno;
+		        	
 	            	estado=data.estado;
 	            	actualizarPuntaje(1,data.puntajeJugador2);
 	    	        actualizarPuntaje(2,data.puntajeJugador1);
 		            nombre1.text(data.nombreJugador2);
 		            nombre2.text(data.nombreJugador1);
         		}
-        		        		
+        		turno=data.turno;
         		
         		
             	refresh();
@@ -482,7 +482,9 @@ function draw(images) {
 }
 
 function tirarCarta(carta){
+	console.log(turno);
 	if(jugador==turno){
+		console.log("wow");
 		var send={}
 		send["partidaID"]=idPartida;
 		send["comando"]=1;
