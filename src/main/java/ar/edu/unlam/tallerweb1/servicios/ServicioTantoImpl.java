@@ -55,7 +55,6 @@ public class ServicioTantoImpl implements ServicioTanto {
 		if(obtenerTantoDeLaMano(mano1) == obtenerTantoDeLaMano(mano2)) return partida.getMano();
 		
 		return 0;
-
 	}
 	
 	

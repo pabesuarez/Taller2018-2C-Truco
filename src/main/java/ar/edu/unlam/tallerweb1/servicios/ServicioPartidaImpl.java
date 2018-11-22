@@ -50,6 +50,9 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		//reiniciar estado de truco
 		partida.setPuntosPorTruco(0);
 		partida.setJugadorTruco(0);
+		//reiniciar mensajes
+		partida.setMensajeJugador1("");
+		partida.setMensajeJugador2("");
 		//refrescar la pantalla de ambos jugadores
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
@@ -185,6 +188,14 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		}else if (partida.getGanadorTanto() == 2){
 			partida.setPuntajeJugador2(partida.getPuntajeJugador2()+partida.getPuntosPorTanto());
 		}
+		
+		if (partida.getPuntajeJugador1() >30) {
+			partida.setPuntajeJugador1(30);
+		}
+		
+		if (partida.getPuntajeJugador2() >30) {
+			partida.setPuntajeJugador2(30);
+		}
 	}
 	
 	@Override
@@ -209,21 +220,34 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			}
 		}
 		sumarPuntaje(partida,ganador);
+		Integer terminado = 0;
+		if(partida.getPuntajeJugador1() == 30) {
+			terminado=1;
+		}else if(partida.getPuntajeJugador2() == 30) {
+			terminado=2;
+		}
+		
+		
 		partida.setEstado(9);
 		partida.setTurno(0);
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
-		
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		repartirCartas(partida);
-		partida.setEstado(2);
-		partida.setTurno(1);
-		partida.setCambiosJugador1(true);
-		partida.setCambiosJugador2(true);
+		if (terminado !=0) {
+			//PENDIENTE: aplicar estadisticas
+			partidasEnCurso.remove(partida);
+			partidaEnCursoDao.removerPartida(partida.getPartidaEnCursoID());
+		}else {
+			repartirCartas(partida);
+			partida.setEstado(2);
+			partida.setTurno(1);
+			partida.setCambiosJugador1(true);
+			partida.setCambiosJugador2(true);
+		}
 		return null;
 	}
 
@@ -309,20 +333,36 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			partida.setEstado(3);
 			partida.setPuntosPorTruco(partida.getPuntosPorTruco()+1);
 			partida.setJugadorTruco(jugador);
+			
+			if (jugador == 1) {
+				partida.setMensajeJugador1(mensajeTruco(partida.getPuntosPorTruco()));
+			}else {
+				partida.setMensajeJugador2(mensajeTruco(partida.getPuntosPorTruco()));
+			}
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
-			
 		}
+	}
+	
+	@Override
+	public String mensajeTruco(Integer truco) {
+		switch(truco) {
+		case 1: return "Truco";
+		case 2: return "Quiero ReTruco";
+		case 3: return "Quiero Vale 4";
+		}
+		return null;
 	}
 	
 	@Override
 	public void cantarEnvido(Partida partida, Integer jugador, Integer comando) {
 		boolean truco = (partida.getEstado() == 3 && jugador != partida.getJugadorTruco());
 		Integer tipo=0;
+		String mensaje="";
 		switch(comando) {
-		case 2: tipo=1; break;
-		case 3: tipo=2; break;
-		case 5: tipo=3; break;
+		case 2: tipo=1; mensaje="Envido"; break;
+		case 3: tipo=2; mensaje="Real Envido"; break;
+		case 5: tipo=3; mensaje="Falta Envido"; break;
 		}
 		if (partida.getGanadorTanto() == 0) {
 			if ((partida.getEstado() == 2 && jugador == partida.getTurno()) || (partida.getEstado() == 4 && jugador != partida.getJugadorTanto()) || truco ) {
@@ -333,6 +373,13 @@ public class ServicioPartidaImpl implements ServicioPartida{
 				partida.setJugadorTanto(jugador);
 				partida.setTipoTanto(servicioTanto.calcularTipoTanto(partida.getTipoTanto(),tipo));
 				partida.setEstado(4);
+				
+				if (jugador == 1) {
+					partida.setMensajeJugador1(mensaje);
+				}else {
+					partida.setMensajeJugador2(mensaje);
+				}
+				
 				partida.setCambiosJugador1(true);
 				partida.setCambiosJugador2(true);
 			}
@@ -343,16 +390,39 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	public void quiero(Partida partida, Integer jugador) {
 		if (partida.getEstado() == 3 && jugador != partida.getJugadorTruco()) {
 			partida.setEstado(2);
+			if(jugador==1) {
+				partida.setMensajeJugador1("Quiero");
+			}else {
+				partida.setMensajeJugador2("Quiero");
+			}
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
 		}else if(partida.getEstado() == 4 && jugador != partida.getJugadorTanto()) {
 			partida.setEstado(5);
+			if(jugador==1) {
+				partida.setMensajeJugador1("Quiero, " + servicioTanto.obtenerTantoDeLaMano(partida.getManoJugador1()));
+			}else {
+				partida.setMensajeJugador2("Quiero, " + servicioTanto.obtenerTantoDeLaMano(partida.getManoJugador2()));
+			}
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
 		}else if(partida.getEstado() == 5 && jugador == partida.getJugadorTanto()) {
 			partida.setGanadorTanto(servicioTanto.compararTanto(partida));
 			partida.setPuntosPorTanto(servicioTanto.calcularValorTanto(partida.getTipoTanto(), true));
 			partida.setEstado(2);
+			if(partida.getGanadorTanto().equals(jugador)) {
+				if(jugador==1) {
+					partida.setMensajeJugador1(servicioTanto.obtenerTantoDeLaMano(partida.getManoJugador1())+" son mejores");
+				}else {
+					partida.setMensajeJugador2(servicioTanto.obtenerTantoDeLaMano(partida.getManoJugador2())+" son mejores");
+				}
+			}else {
+				if(jugador==1) {
+					partida.setMensajeJugador1(servicioTanto.obtenerTantoDeLaMano(partida.getManoJugador1())+" ");
+				}else {
+					partida.setMensajeJugador2(servicioTanto.obtenerTantoDeLaMano(partida.getManoJugador2())+" ");
+				}
+			}
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
 		}
@@ -362,15 +432,19 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		if (partida.getEstado() == 3 && jugador != partida.getJugadorTruco()) {
 			partida.setPuntosPorTruco(partida.getPuntosPorTruco()-1);
 			if (jugador==1) {
+				partida.setMensajeJugador1("No Quiero");
 				concluirMano(partida, 2);
 			}else {
+				partida.setMensajeJugador2("No Quiero");
 				concluirMano(partida ,1);
 			}
 		}else if(partida.getEstado() == 4 && jugador != partida.getJugadorTanto()) {
 			partida.setGanadorTanto(3);
 			if(jugador == 1) {
+				partida.setMensajeJugador1("No Quiero");
 				partida.setPuntajeJugador1(partida.getPuntajeJugador1()+servicioTanto.calcularValorTanto(partida.getTipoTanto(), false));
 			}else {
+				partida.setMensajeJugador2("No Quiero");
 				partida.setPuntajeJugador2(partida.getPuntajeJugador2()+servicioTanto.calcularValorTanto(partida.getTipoTanto(), false));
 			}
 			partida.setEstado(2);
@@ -380,6 +454,11 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			partida.setGanadorTanto(getOponente(jugador));
 			partida.setPuntosPorTanto(servicioTanto.calcularValorTanto(partida.getTipoTanto(), true));
 			partida.setEstado(2);
+			if(jugador == 1) {
+				partida.setMensajeJugador1("Son Buenas");
+			}else {
+				partida.setMensajeJugador2("Son Buenas");
+			}
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
 		}

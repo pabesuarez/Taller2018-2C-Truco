@@ -33,10 +33,23 @@ public class Partida {
 	private Integer puntosPorTanto = 0;				//Puntaje a sumar al finalizar la ronda
 	private Integer jugadorTanto = 0;				//Quien canta el ultimo tanto	
 	private Integer tipoTanto = 0;					//Tipo de Tanto
+	private String mensajeJugador1="";
+	private String mensajeJugador2="";
 	
 	
 	
-	
+	public String getMensajeJugador1() {
+		return mensajeJugador1;
+	}
+	public void setMensajeJugador1(String mensajeJugador1) {
+		this.mensajeJugador1 = mensajeJugador1;
+	}
+	public String getMensajeJugador2() {
+		return mensajeJugador2;
+	}
+	public void setMensajeJugador2(String mensajeJugador2) {
+		this.mensajeJugador2 = mensajeJugador2;
+	}
 	public Integer getGanadorTanto() {
 		return ganadorTanto;
 	}

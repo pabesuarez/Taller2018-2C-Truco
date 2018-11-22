@@ -18,7 +18,6 @@ import ar.edu.unlam.tallerweb1.modelo.Mensaje;
 import ar.edu.unlam.tallerweb1.modelo.Partida;
 import ar.edu.unlam.tallerweb1.modelo.PartidaEnCurso;
 import ar.edu.unlam.tallerweb1.servicios.ServicioPartida;
-import ar.edu.unlam.tallerweb1.servicios.ServicioTanto;
 
 @Controller
 public class ControladorApp {
@@ -92,7 +91,7 @@ public class ControladorApp {
 	//unirse a una partida ya existente
 	@RequestMapping("/jugar/{partidaID}")
 	public ModelAndView jugar(@PathVariable Integer partidaID, HttpServletRequest request) {
-		Partida partida = servicioPartida.unirseAPartida(partidaID,(Long)request.getAttribute("usuarioId"));
+		Partida partida = servicioPartida.unirseAPartida(partidaID,(Long)request.getSession().getAttribute("usuarioId"));
 		ModelMap modelo = new ModelMap();
 		modelo.put("partida", partida);
 		return new ModelAndView("juego",modelo);

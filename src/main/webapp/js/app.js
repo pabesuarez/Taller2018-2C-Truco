@@ -1,6 +1,8 @@
 var width = 512;
 var height = 550;
 
+var timeout;
+
 var cartasPropias = [];
 var cartasOponente = [];
 var cartasMesaPropias = [];
@@ -30,6 +32,8 @@ function calcularEnvido(cartas){
 		caso = 3;
 	}else if(Math.floor(mano[1]/10) == Math.floor(mano[2]/10)) {
 		caso = 2;
+	}else if(Math.floor(mano[0]/10) == Math.floor(mano[2]/10)){
+		caso = 4
 	}
 	
 	for(i=0;i<=2;i++){
@@ -44,19 +48,18 @@ function calcularEnvido(cartas){
 	switch (caso) {
 		case 1:
 			mano.sort(function(a, b){return a-b});
-			console.log("caso1:" + (20 + mano[1] + mano[2]));
 			return 20 + mano[1] + mano[2];
 			break;
 		case 2:
-			console.log("caso2:" + (20 + mano[1] + mano[2]));
 			return 20 + mano[1] + mano[2];
 			break;
 		case 3:
-			console.log("caso3:" + (20 + mano[0] + mano[1]));
 			return 20 + mano[0] + mano[1];
 			break;
+		case 4:
+			return 20 + mano[0] + mano[2];
+			break;
 		default:
-			console.log("caso0:"+ mano[2]);
 			mano.sort(function(a, b){return a-b});
 			return mano[2];
 			break;
@@ -190,15 +193,15 @@ function actualizar(){
         	
         	
         	if(data.partidaID == undefined){
-        		setTimeout(function(){ actualizar() },1000);
+        		timeout = setTimeout(function(){ actualizar() },1000);
         	}else{
         		if (data.puntosPorTruco <3){
         			$("#btnTruco").text(mensajeTruco(data.puntosPorTruco+1))
         		}
         		
         		if (data.estado != 5){
-        			$("btnQuiero").text("Quiero")
-        			$("btnNoQuiero").text("No Quiero")
+        			$("#btnQuiero").text("Quiero")
+        			$("#btnNoQuiero").text("No Quiero")
         		}
         		
         		
@@ -214,18 +217,13 @@ function actualizar(){
             			$("btnFaltaEnvido").hide();
             		}
             		
-            		$("#mensajePropio").text("");
-            		$("#mensajeOponente").text("");
             		$("#btnQuiero").hide();
         			$("#btnNoQuiero").hide();
         			break;
             	case 3:
             		$("#botones button").hide();
             		
-            		if (data.jugadorTruco == jugador){
-            			$("#mensajePropio").text(mensajeTruco(data.puntosPorTruco));
-            		}else{
-            			$("#mensajeOponente").text(mensajeTruco(data.puntosPorTruco));
+            		if (data.jugadorTruco != jugador){
             			$("#btnQuiero").show();
             			$("#btnNoQuiero").show();
             			if (data.puntosPorTruco <3){
@@ -240,10 +238,7 @@ function actualizar(){
             		break;
             	case 4:
             		$("#botones button").hide();
-            		if (data.jugadorTanto == jugador){
-            			$("#mensajePropio").text(mensajeEnvido(data.tipoTanto));
-            		}else{
-            			$("#mensajeOponente").text(mensajeEnvido(data.tipoTanto));
+            		if (data.jugadorTanto != jugador){
             			switch(data.tipoTanto){
             			case 1:
             				$("#btnEnvido").show();
@@ -262,10 +257,7 @@ function actualizar(){
             		break;
             	case 5:
             		$("#botones button").hide();
-            		if (data.jugadorTanto != jugador){
-            			$("#mensajePropio").text("Quiero, "+envido);
-            		}else{
-            			$("#mensajeOponente").text("Quiero, "+envidoOponente);
+            		if (data.jugadorTanto == jugador){
             			$("#btnQuiero").text(envido);
             			$("#btnNoQuiero").text("Son buenas");
             			$("#btnQuiero").show();
@@ -279,7 +271,9 @@ function actualizar(){
         		if (jugador==1){
         			envido = calcularEnvido([data.manoJugador1[0],data.manoJugador1[1],data.manoJugador1[2]])
         			envidoOponente = calcularEnvido([data.manoJugador2[0],data.manoJugador2[1],data.manoJugador2[2]])
-		        	for(i=0;i<=2;i++){
+		        	$("#mensajePropio").text(data.mensajeJugador1);
+        			$("#mensajeOponente").text(data.mensajeJugador2);
+        			for(i=0;i<=2;i++){
 			        	dibujar(cartasPropias[i],data.manoJugador1[i]);
 			        	dibujar(cartasOponente[i],40);
 			        	dibujarGanador(i,data.resultado[i]);
@@ -298,7 +292,15 @@ function actualizar(){
 			        		dibujar(cartasMesaOponente[i],41);
 			        	}
 		        	}
+		        	
+		        	actualizarPuntaje(1,data.puntajeJugador1);
+    	        	actualizarPuntaje(2,data.puntajeJugador2);
+            		nombre1.text(data.nombreJugador1);
+	            	nombre2.text(data.nombreJugador2);
+		        	
         		}else{
+        			$("#mensajePropio").text(data.mensajeJugador2);
+        			$("#mensajeOponente").text(data.mensajeJugador1);
         			envido = calcularEnvido([data.manoJugador2[0],data.manoJugador2[1],data.manoJugador2[2]])
         			envidoOponente = calcularEnvido([data.manoJugador1[0],data.manoJugador1[1],data.manoJugador1[2]])
 		        	for(i=0;i<=2;i++){
@@ -319,18 +321,24 @@ function actualizar(){
 			        	}else{
 			        		dibujar(cartasMesaOponente[i],41);
 			        	}
-		        	}		        	
+		        	}		       
+		        	turno=data.turno;
+	            	estado=data.estado;
+	            	actualizarPuntaje(1,data.puntajeJugador2);
+	    	        actualizarPuntaje(2,data.puntajeJugador1);
+		            nombre1.text(data.nombreJugador2);
+		            nombre2.text(data.nombreJugador1);
         		}
         		        		
-        		actualizarPuntaje(1,data.puntajeJugador1);
-	        	actualizarPuntaje(2,data.puntajeJugador2);
-        		turno=data.turno;
-            	estado=data.estado;
-            	nombre1.text(data.nombreJugador1);
-            	nombre2.text(data.nombreJugador2);
+        		
+        		
             	refresh();
-            	setTimeout(function(){ actualizar() },1000);
-        	}	
+            	if(data.puntajeJugador1 == 30 || data.puntajeJugador2 == 30){
+            		$("#estado").text("partida terminada");
+            	}else{
+            		timeout = setTimeout(function(){ actualizar() },1000);
+            	}
+        	}
         },
     });
 }

@@ -13,7 +13,7 @@
 		
 	<div id="loginbox" style="margin-top:20px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
 
-				<form:form action="registrarUsuario" method="POST" modelAttribute="usuario">
+				<form:form action="registrar-usuario" method="POST" modelAttribute="usuario">
 	<h3>Ingrese sus datos</h3>
 	
 	<label for="nombre">Nombre:</label>					

@@ -35,7 +35,7 @@ public class ControladorUsuario {
 		if (usuarioBuscado != null) {
 			request.getSession().setAttribute("usuarioNombre", usuarioBuscado.getNombre());
 			request.getSession().setAttribute("usuarioId", usuarioBuscado.getId());
-			return new ModelAndView("redirect:/nuevaPartida");
+			return new ModelAndView("redirect:/");
 		} else {
 			model.put("error", "Usuario o clave incorrecta");
 		}
@@ -57,7 +57,7 @@ public class ControladorUsuario {
 		return new ModelAndView("registro", modelo);
 	}
 
-	@RequestMapping(path="/registrarUsuario",method=RequestMethod.POST)
+	@RequestMapping(path="/registrar-usuario",method=RequestMethod.POST)
 	public ModelAndView irAValidarMascota(@ModelAttribute ("usuario") Usuario usuario,HttpServletRequest request) {
 		
 		ModelMap modelo = new ModelMap();
@@ -74,9 +74,9 @@ public class ControladorUsuario {
 	
      }
 	
-	@RequestMapping("cerrarSession")
+	@RequestMapping("/cerrar-sesion")
 	public ModelAndView cerrarSession(HttpServletRequest request) {
-			request.getSession().setAttribute("id", null);
+			request.getSession().invalidate();
 			return new ModelAndView("redirect:/login");
 		}
 }

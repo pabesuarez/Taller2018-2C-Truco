@@ -21,7 +21,7 @@
 					<span class="ml-3">logeado como: ${sessionScope.usuarioNombre}</span>
 					<a class="ml-3" href="${url}/registro">Registrarse</a>
 					<a class="ml-3" href="${url}/login">Login</a>
-					<a class="ml-3" href="${url}/login">Logout</a>
+					<a class="ml-3" href="${url}/cerrar-sesion">Logout</a>
 				</div>
 			</div>
 			<div class="row">

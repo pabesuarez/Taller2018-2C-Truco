@@ -24,4 +24,5 @@ public interface ServicioPartida {
 	public Partida unirseAPartida(Integer partidaID,Long jugadorId);
 	public List<PartidaEnCurso> obtenerPartidasEnCurso();
 	public Integer getOponente(Integer jugador);
+	public String mensajeTruco(Integer truco);
 }
