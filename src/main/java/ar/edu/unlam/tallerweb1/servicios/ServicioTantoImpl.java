@@ -127,10 +127,16 @@ public class ServicioTantoImpl implements ServicioTanto {
 		}else {
 			if(tipo <= 3) {
 				return 1;
-			}else if (tipo <=7) {
+			}else if(tipo <= 6) {
 				return 2;
-			}else {
+			}else if(tipo == 7) {
 				return 3;
+			}else if(tipo <= 9) {
+				return 4;
+			}else if(tipo ==10) {
+				return 5;
+			}else {
+				return 7;
 			}
 		}
 	}
