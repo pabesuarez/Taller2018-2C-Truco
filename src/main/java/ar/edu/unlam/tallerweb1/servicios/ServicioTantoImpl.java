@@ -26,7 +26,8 @@ public class ServicioTantoImpl implements ServicioTanto {
 		
 		if( obtenerPaloDeLaCarta(mano[0]) == obtenerPaloDeLaCarta(mano[1]) && obtenerPaloDeLaCarta(mano[0]) == obtenerPaloDeLaCarta(mano[2])) {caso = 1;} else {
 		if( obtenerPaloDeLaCarta(mano[0]) == obtenerPaloDeLaCarta(mano[1])) {caso = 3;} else {
-		if( obtenerPaloDeLaCarta(mano[1]) == obtenerPaloDeLaCarta(mano[2])) {caso = 2;}}}
+		if( obtenerPaloDeLaCarta(mano[1]) == obtenerPaloDeLaCarta(mano[2])) {caso = 2;} else {
+		if( obtenerPaloDeLaCarta(mano[0]) == obtenerPaloDeLaCarta(mano[2])) {caso = 4;}}}}
 		
 		mano[0] = obtenerTantoDeLaCarta(mano[0]);
 		mano[1] = obtenerTantoDeLaCarta(mano[1]);
@@ -39,6 +40,8 @@ public class ServicioTantoImpl implements ServicioTanto {
 				return 20 + mano[1] + mano[2];
 			case 3:
 				return 20 + mano[0] + mano[1];
+			case 4:
+				return 20 + mano[0] + mano[2];
 			default:
 				Arrays.sort(mano);
 				return mano[2];
@@ -123,10 +126,16 @@ public class ServicioTantoImpl implements ServicioTanto {
 		}else {
 			if(tipo <= 3) {
 				return 1;
-			}else if (tipo <=7) {
+			}else if(tipo <= 6) {
 				return 2;
-			}else {
+			}else if(tipo == 7) {
 				return 3;
+			}else if(tipo <= 9) {
+				return 4;
+			}else if(tipo ==10) {
+				return 5;
+			}else {
+				return 7;
 			}
 		}
 	}

@@ -1,5 +1,6 @@
 package ar.edu.unlam.tallerweb1.persistencia;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 
@@ -49,7 +50,7 @@ public class JuegoTest {
 
 		Integer ganador = servicioTanto.compararTanto(partida);
 		
-		assertThat(ganador).isEqualTo(1);		
+		assertThat(ganador).isEqualTo(new Integer(1));		
 	}
 	
 	
