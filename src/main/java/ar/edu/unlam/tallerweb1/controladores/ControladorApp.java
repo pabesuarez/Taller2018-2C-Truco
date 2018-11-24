@@ -25,6 +25,16 @@ public class ControladorApp {
 	@Inject
 	private ServicioPartida servicioPartida;
 	
+	
+	
+	public ServicioPartida getServicioPartida() {
+		return servicioPartida;
+	}
+
+	public void setServicioPartida(ServicioPartida servicioPartida) {
+		this.servicioPartida = servicioPartida;
+	}
+
 	// mientras no sea el turno del jugador, este constantemente estara llamando a esta funcion, en caso de haber un nuevo cambio, se le notificara al jugador
 	@ResponseBody
 	@RequestMapping(path = "/app/actualizar", method = RequestMethod.POST, produces = "application/json")

@@ -1,11 +1,10 @@
 package ar.edu.unlam.tallerweb1.persistencia;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import static org.assertj.core.api.Assertions.*;
 
 import ar.edu.unlam.tallerweb1.modelo.Partida;
-import ar.edu.unlam.tallerweb1.servicios.ServicioPartida;
+import ar.edu.unlam.tallerweb1.servicios.ServicioCartasImpl;
 import ar.edu.unlam.tallerweb1.servicios.ServicioPartidaImpl;
 import ar.edu.unlam.tallerweb1.servicios.ServicioTanto;
 import ar.edu.unlam.tallerweb1.servicios.ServicioTantoImpl;
@@ -14,9 +13,10 @@ public class JuegoTest {
 
 	@Test
 	public void anchoDeEspadaLeGanaAAnchoDeBastoTest() {
-		ServicioPartida servicioPartida = new ServicioPartidaImpl();
+		ServicioPartidaImpl servicioPartida = new ServicioPartidaImpl();
+		servicioPartida.setServicioCartas(new ServicioCartasImpl());
 		
-		Integer resultado = servicioPartida.compararValor(0, 10);
+		Integer resultado = servicioPartida.getServicioCartas().compararValor(0, 10);
 		
 		assertThat(resultado).isEqualTo(1);
 		

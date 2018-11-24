@@ -33,7 +33,7 @@
 		</div>
 		<script src="${url}/js/jquery-3.0.0.min.js"></script>
 		<script src="${url}/js/bootstrap.min.js" type="text/javascript"></script>
-		<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js" type="text/javascript"></script>
+		<script src="${url}/js/jquery.dataTables.min.js" type="text/javascript"></script>
 		<script src="${url}/js/datatable.js" type="text/javascript"></script>
 		<jsp:invoke fragment="scripts"/>
 	</body>

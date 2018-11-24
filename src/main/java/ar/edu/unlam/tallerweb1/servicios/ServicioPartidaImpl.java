@@ -1,7 +1,6 @@
 package ar.edu.unlam.tallerweb1.servicios;
 
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -23,18 +22,41 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	@Inject
 	private ServicioTanto servicioTanto;
 	
+	public void setServicioTanto(ServicioTanto servicioTanto) {
+		this.servicioTanto=servicioTanto;
+	}
+	
+	@Inject
+	private ServicioCartas servicioCartas;
+	
 	@Inject
 	private PartidaEnCursoDao partidaEnCursoDao;
+	
+	public void setPartidaEnCursoDao(PartidaEnCursoDao partidaEnCursoDao) {
+		this.partidaEnCursoDao=partidaEnCursoDao;
+	}
 	
 	@Inject
 	private UsuarioDao usuarioDao;
 	
+	public void setUsuarioDao(UsuarioDao usuarioDao) {
+		this.usuarioDao=usuarioDao;
+	}
+	
+	public ServicioCartas getServicioCartas() {
+		return servicioCartas;
+	}
+
+	public void setServicioCartas(ServicioCartas servicioCartas) {
+		this.servicioCartas = servicioCartas;
+	}
+
 	@Override
 	public void repartirCartas(Partida partida) {
-		Collections.shuffle(mazo); //mezclar el mazo
+		servicioCartas.getMazo().mezclar();
 		//repartir cartas
-		partida.setManoJugador1(new int[]{mazo.get(0),mazo.get(2),mazo.get(4)});
-		partida.setManoJugador2(new int[]{mazo.get(1),mazo.get(3),mazo.get(5)});
+		partida.setManoJugador1(new int[]{servicioCartas.getMazo().getCarta(0),servicioCartas.getMazo().getCarta(2),servicioCartas.getMazo().getCarta(4)});
+		partida.setManoJugador2(new int[]{servicioCartas.getMazo().getCarta(1),servicioCartas.getMazo().getCarta(3),servicioCartas.getMazo().getCarta(5)});
 		//reiniciar la mesa
 		partida.setCartasEnJuego1(new int[] {3,3,3});
 		partida.setCartasEnJuego2(new int[] {3,3,3});
@@ -58,64 +80,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		partida.setCambiosJugador2(true);
 	}
 
-	@Override
-	public Integer obtenerValor(Integer carta) {
-		/*
-			Cada carta del mazo tiene un valor numerico
-			Las decenas indican el palo mientras que la unidad el numero de la carta
-			0-9:   espada
-			10-19: basto
-			20-29: oro
-			30-39: copa
-		*/
-		switch(carta) {
-			// 1 de espada
-			case 0: 
-				return 14;	
-			// 1 de basto
-			case 10:
-				return 13;
-			// 7 de espada
-			case 6:
-				return 12;
-			// 7 de oro
-			case 26: 
-				return 11;
-			// 3 (cualquier palo)
-			case 2: case 12: case 22: case 32: 
-				return 10;
-			// 2 (cualquier palo)
-			case 1: case 11: case 21: case 31:
-				return 9;
-			// 1 (oro o copa)
-			case 20: case 30:
-				return 8;
-			// 12 (cualquier palo)
-			case 9: case 19: case 29: case 39:
-				return 7;
-			// 11 (cualquier palo)
-			case 8: case 18: case 28: case 38:
-				return 6;
-			// 10 (cualquier palo)
-			case 7: case 17: case 27: case 37:
-				return 5;
-			// 7 (basto y copa)
-			case 16: case 36:
-				return 4;
-			// 6 (cualquier palo)
-			case 5: case 15: case 25: case 35:
-				return 3;
-			// 5 (cualquier palo)
-			case 4: case 14: case 24: case 34:
-				return 2;
-			// 4 (cualquier palo)
-			case 3: case 13: case 23: case 33:
-				return 1;
-			// en caso de recibir un parametro invalido
-			default: break;
-		}
-		return null;
-	}
+
 
 	@Override
 	public void tirarCarta(Partida partida, Integer jugador, Integer carta) {
@@ -134,7 +99,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		Integer carta2 = partida.getCartaJuego2(partida.getRonda());
 		//si ambos jugadores han tirado carta se comprueban las cartas
 		if (carta1 !=3  && carta2 !=3) {
-			Integer resultado = compararValor(partida.getCartaMano1(carta1),partida.getCartaMano2(carta2));
+			Integer resultado = servicioCartas.compararValor(partida.getCartaMano1(carta1),partida.getCartaMano2(carta2));
 			partida.setResultado(partida.getRonda(),resultado);
 			//si era la ultima carta de la ronda se concluye la mano
 			if(partida.getRonda() == 2) {
@@ -164,6 +129,9 @@ public class ServicioPartidaImpl implements ServicioPartida{
 				if(resultado != 3) {
 					partida.setTurno(resultado);
 				}
+				if(partida.getGanadorTanto() == 0) {
+					partida.setGanadorTanto(3);
+				}
 				partida.setRonda(partida.getRonda()+1);
 			}
 		}
@@ -174,21 +142,27 @@ public class ServicioPartidaImpl implements ServicioPartida{
 
 	@Override
 	public void sumarPuntaje(Partida partida, Integer jugador) {
+		//jugador al ganador de la mano, si no se especifica gana quien sea mano
 		if (jugador == 0) {
 			jugador = partida.getMano();
 		}
+		
+		//se suman los puntos por truco +1 por ganar
 		if (jugador == 1) {
 			partida.setPuntajeJugador1(partida.getPuntajeJugador1()+1+partida.getPuntosPorTruco());
 		}else{
 			partida.setPuntajeJugador2(partida.getPuntajeJugador2()+1+partida.getPuntosPorTruco());
 		}
 		
+		//se suma los puntos por envido
 		if (partida.getGanadorTanto() == 1) {
 			partida.setPuntajeJugador1(partida.getPuntajeJugador1()+partida.getPuntosPorTanto());
 		}else if (partida.getGanadorTanto() == 2){
 			partida.setPuntajeJugador2(partida.getPuntajeJugador2()+partida.getPuntosPorTanto());
 		}
 		
+		//si se supera el puntaje requerido se iguala al maximo
+		//PENDIENTE: cambiar 30 por la configuracion de la partida (15/30 o partida.getPuntajeParaGanar)
 		if (partida.getPuntajeJugador1() >30) {
 			partida.setPuntajeJugador1(30);
 		}
@@ -204,6 +178,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			Integer total1=0;
 			Integer total2=0;
 			
+			//revisa quien cuantas rondas gano cada jugador
 			for (Integer i=0;i<=2;i++) {
 				if(partida.getResultado(i) == 1 ) {
 					total1+=1;
@@ -217,9 +192,16 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			//si gana el jugador 2
 			}else if (total1<total2){
 				ganador=2;
+			// si se empata gana el jugador mano
+			}else {
+				ganador=partida.getMano();
 			}
 		}
+		//aplica el puntaje
 		sumarPuntaje(partida,ganador);
+		
+		//verifica si algun jugador alcanzo el puntaje para ganar
+		//PENDIENTE: cambiar 30 por la configuracion de la partida (15/30 o partida.getPuntajeParaGanar)
 		Integer terminado = 0;
 		if(partida.getPuntajeJugador1() == 30) {
 			terminado=1;
@@ -227,24 +209,28 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			terminado=2;
 		}
 		
-		
+		//deja al cliente sin poder hacer nada
 		partida.setEstado(9);
 		partida.setTurno(0);
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
+		//esperar 3 segundos antes de continuar
 		try {
 			Thread.sleep(3000);
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
+		// si la partida termino eliminarla de memoria y base de datos
 		if (terminado !=0) {
 			//PENDIENTE: aplicar estadisticas
 			partidasEnCurso.remove(partida);
 			partidaEnCursoDao.removerPartida(partida.getPartidaEnCursoID());
 		}else {
+		// si no termino, reinicia la ronda
 			repartirCartas(partida);
 			partida.setEstado(2);
-			partida.setTurno(1);
+			partida.setMano(getOponente(partida.getMano())); //alterna quien es mano
+			partida.setTurno(partida.getMano()); 
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
 		}
@@ -270,6 +256,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		partidaEnCurso.setIdPartida(partida.getPartidaID());
 		partidaEnCursoDao.nuevaPartida(partidaEnCurso);
 		//opciones
+		//PENDIENTE: aplicar configuracion
 		partida.setMano(1);
 		partida.setPartidaEnCursoID(partidaEnCurso.getId());
 		return partida;
@@ -281,16 +268,20 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		Long partidaEnCursoID = partida.getPartidaEnCursoID();
 		Usuario jugador = usuarioDao.buscarPorId(jugadorId);
 		Integer estado = partida.getEstado();
+		//si la partida esta recien creada se lo asigna como jugador 1 y cambia el estado a esperando jugador
 		if (estado == 0) {
 			partida.setEstado(1);
+			//si el jugador esta logeado se cambia el nombre al nombre de usuario logeado, si no se lo ingresa como invitado
 			if (jugador != null) {
 				partida.setNombreJugador1(jugador.getNombre());
 			}else {
 				partida.setNombreJugador1("Invitado");
 			}
+			// aplica los cambios en la base de datos
 			partidaEnCursoDao.unirJugador(partidaEnCursoID, 1, jugador);
 			partidaEnCursoDao.cambiarEstado(partidaEnCursoID, 1);
 		}else if(estado == 1) {
+			// si a la partida le faltaba un jugador se lo asigna como jugador 2 y empieza la partida
 			partida.setEstado(2);
 			if (jugador != null) {
 				partida.setNombreJugador2(jugador.getNombre());
@@ -305,35 +296,29 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		return partida;
 	}
 
-	@Override
-	public Integer compararValor(Integer carta1, Integer carta2) {
-		Integer valor1=obtenerValor(carta1);
-		Integer valor2=obtenerValor(carta2);
-		if(valor1 > valor2) {
-			return 1; //gana el jugador 1
-		}else if (valor1 == valor2) {
-			return 3; // parda
-		}else {
-			return 2; // gana el jugador 2
-		}
-	}
+
 	
+	// devuelve las partidas que esten en la base de datos
 	@Override
 	public List<PartidaEnCurso> obtenerPartidasEnCurso() {
 		List<PartidaEnCurso> partidas = partidaEnCursoDao.traerTodasLasPartidasEnProgreso();
 		return partidas;
 	}
-
+	
 	@Override
 	public void cantarTruco(Partida partida, Integer jugador) {
+		//verifica si el jugador puede cantar truco
 		if (partida.getJugadorTruco() != jugador && partida.getPuntosPorTruco() != 3 && (partida.getEstado() !=2 || partida.getEstado() !=3 )) {
+			//si no es la primera vez que se canta truco y no se canto envido, se anula la posiblidad de cantar envido
 			if (partida.getPuntosPorTruco() != 0 && partida.getGanadorTanto() == 0) {
 				partida.setGanadorTanto(3);
 			}
+			//pone la partida en estado de espera de respuesta del otro jugador
 			partida.setEstado(3);
 			partida.setPuntosPorTruco(partida.getPuntosPorTruco()+1);
 			partida.setJugadorTruco(jugador);
 			
+			//actualiza el mensaje del jugador
 			if (jugador == 1) {
 				partida.setMensajeJugador1(mensajeTruco(partida.getPuntosPorTruco()));
 			}else {
@@ -356,24 +341,31 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	
 	@Override
 	public void cantarEnvido(Partida partida, Integer jugador, Integer comando) {
-		boolean truco = (partida.getEstado() == 3 && jugador != partida.getJugadorTruco());
+		boolean truco = (partida.getEstado() == 3 && jugador != partida.getJugadorTruco()); //si se canto truco
 		Integer tipo=0;
 		String mensaje="";
+		//cambia el mensaje segun que se canto
 		switch(comando) {
 		case 2: tipo=1; mensaje="Envido"; break;
 		case 3: tipo=2; mensaje="Real Envido"; break;
 		case 5: tipo=3; mensaje="Falta Envido"; break;
 		}
+		// si aun no se canto tanto o no se anulo
 		if (partida.getGanadorTanto() == 0) {
 			if ((partida.getEstado() == 2 && jugador == partida.getTurno()) || (partida.getEstado() == 4 && jugador != partida.getJugadorTanto()) || truco ) {
+				//si es una respuesta a un truco se reinicia el estado del truco
 				if (truco) {
 					partida.setJugadorTruco(0);
 					partida.setPuntosPorTruco(0);
 				}
+				//guarda quien es el ultimo que canto tanto
 				partida.setJugadorTanto(jugador);
+				//actualiza el tipo del envido(ver servicioTanto)
 				partida.setTipoTanto(servicioTanto.calcularTipoTanto(partida.getTipoTanto(),tipo));
+				//pone la partida en estado de espera de respuesta de envido
 				partida.setEstado(4);
 				
+				//actualiza el mensaje
 				if (jugador == 1) {
 					partida.setMensajeJugador1(mensaje);
 				}else {
@@ -386,10 +378,14 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		}
 	}
 
+	//segun el estado aplica los cambios ante una respuesta positiva
 	@Override
 	public void quiero(Partida partida, Integer jugador) {
+		// en caso de estar respondiendo a truco
 		if (partida.getEstado() == 3 && jugador != partida.getJugadorTruco()) {
+			//volver la partida al estado normal
 			partida.setEstado(2);
+			//actualizar el mensaje
 			if(jugador==1) {
 				partida.setMensajeJugador1("Quiero");
 			}else {
@@ -397,8 +393,11 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			}
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
+		//en caso de estar respondiendo a envido
 		}else if(partida.getEstado() == 4 && jugador != partida.getJugadorTanto()) {
+			//poner la partida en estado de respuesta de envido (decir el puntaje o "son buenas")
 			partida.setEstado(5);
+			//actualizar el mensaje y decir cuanto tanto tiene en mano
 			if(jugador==1) {
 				partida.setMensajeJugador1("Quiero, " + servicioTanto.obtenerTantoDeLaMano(partida.getManoJugador1()));
 			}else {
@@ -406,10 +405,14 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			}
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
+		// en caso de responder la cantidad de tanto una vez aceptado el envido
 		}else if(partida.getEstado() == 5 && jugador == partida.getJugadorTanto()) {
+			//decidir el ganador del tanto y cuantos puntos vale
 			partida.setGanadorTanto(servicioTanto.compararTanto(partida));
 			partida.setPuntosPorTanto(servicioTanto.calcularValorTanto(partida.getTipoTanto(), true));
-			partida.setEstado(2);
+			partida.setEstado(2); // volver la partida al estado normal
+			
+			//en caso de ganar se le agrega " son mejores"
 			if(partida.getGanadorTanto().equals(jugador)) {
 				if(jugador==1) {
 					partida.setMensajeJugador1(servicioTanto.obtenerTantoDeLaMano(partida.getManoJugador1())+" son mejores");
@@ -428,9 +431,14 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		}
 	}
 	
+	//segun el estado aplica los cambios ante una respuesta negativa
 	public void noQuiero(Partida partida, Integer jugador) {
+		//en caso de estar respondiendo a truco
 		if (partida.getEstado() == 3 && jugador != partida.getJugadorTruco()) {
+			// se resta un punto al truco para coincidir con el valor
 			partida.setPuntosPorTruco(partida.getPuntosPorTruco()-1);
+			
+			// se termina la ronda declarando como ganador al contrario
 			if (jugador==1) {
 				partida.setMensajeJugador1("No Quiero");
 				concluirMano(partida, 2);
@@ -438,8 +446,12 @@ public class ServicioPartidaImpl implements ServicioPartida{
 				partida.setMensajeJugador2("No Quiero");
 				concluirMano(partida ,1);
 			}
+			
+		//en caso de estar respondiendo a envido
 		}else if(partida.getEstado() == 4 && jugador != partida.getJugadorTanto()) {
+			//el envido no se jugo por lo tanto no hay ganador
 			partida.setGanadorTanto(3);
+			//inmediatamente se suma el puntaje correspondiente al oponente
 			if(jugador == 1) {
 				partida.setMensajeJugador1("No Quiero");
 				partida.setPuntajeJugador1(partida.getPuntajeJugador1()+servicioTanto.calcularValorTanto(partida.getTipoTanto(), false));
@@ -447,13 +459,19 @@ public class ServicioPartidaImpl implements ServicioPartida{
 				partida.setMensajeJugador2("No Quiero");
 				partida.setPuntajeJugador2(partida.getPuntajeJugador2()+servicioTanto.calcularValorTanto(partida.getTipoTanto(), false));
 			}
+			
+			//vuelve la partida al estado normal
 			partida.setEstado(2);
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
+		// en caso de responder "Son buenas" una vez empezado el envido
 		}else if(partida.getEstado() == 5 && jugador == partida.getJugadorTanto()) {
+			//se declara ganador del envido al oponente y se aplica el calculo al puntaje
 			partida.setGanadorTanto(getOponente(jugador));
 			partida.setPuntosPorTanto(servicioTanto.calcularValorTanto(partida.getTipoTanto(), true));
+			//vuelve la partida al estado normal
 			partida.setEstado(2);
+			//actualiza el mensaje
 			if(jugador == 1) {
 				partida.setMensajeJugador1("Son Buenas");
 			}else {
@@ -463,7 +481,8 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			partida.setCambiosJugador2(true);
 		}
 	}
-
+	
+	//devuelve el jugador contrario al que entra por parametro
 	@Override
 	public Integer getOponente(Integer jugador) {
 		if(jugador == 1) {
@@ -472,6 +491,4 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			return 1;
 		}
 	}
-	
-	
 }

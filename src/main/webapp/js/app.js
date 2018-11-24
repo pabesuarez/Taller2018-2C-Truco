@@ -208,13 +208,15 @@ function actualizar(){
         		switch(data.estado){
             	case 2:
             		$("#botones button").show();
-            		if(data.jugadorTruco == jugador || data.puntosPorTruco == 3){
+            		if((data.jugadorTruco == jugador || data.puntosPorTruco == 3)){
             			$("#btnTruco").hide();
             		}
-            		if(data.ganadorTanto != 0 || data.turno != jugador){
-            			$("btnEnvido").hide();
-            			$("btnRealEnvido").hide();
-            			$("btnFaltaEnvido").hide();
+            		
+            		
+            		if((data.ganadorTanto != 0 || data.turno != jugador)){
+            			$("#btnEnvido").hide();
+            			$("#btnRealEnvido").hide();
+            			$("#btnFaltaEnvido").hide();
             		}
             		
             		$("#btnQuiero").hide();
@@ -323,12 +325,12 @@ function actualizar(){
 			        	}
 		        	}		       
 		        	
-	            	estado=data.estado;
 	            	actualizarPuntaje(1,data.puntajeJugador2);
 	    	        actualizarPuntaje(2,data.puntajeJugador1);
 		            nombre1.text(data.nombreJugador2);
 		            nombre2.text(data.nombreJugador1);
         		}
+        		estado=data.estado;
         		turno=data.turno;
         		
         		
@@ -484,7 +486,6 @@ function draw(images) {
 function tirarCarta(carta){
 	console.log(turno);
 	if(jugador==turno){
-		console.log("wow");
 		var send={}
 		send["partidaID"]=idPartida;
 		send["comando"]=1;

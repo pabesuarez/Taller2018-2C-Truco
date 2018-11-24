@@ -14,5 +14,6 @@
 		  <br>
 		    <br>
 		<a href="${url}/nuevaPartida" class="btn btn-primary btn-block btn-success">Nueva Partida</a>
+		<a href="${url}/lobby" class="btn btn-primary btn-block btn-success">Lobby</a>
 	</jsp:attribute>
 </t:default>
