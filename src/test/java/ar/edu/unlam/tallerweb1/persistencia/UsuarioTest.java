@@ -3,12 +3,19 @@ package ar.edu.unlam.tallerweb1.persistencia;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.ModelAndView;
 
 import ar.edu.unlam.tallerweb1.SpringTest;
 import ar.edu.unlam.tallerweb1.controladores.ControladorUsuario;
@@ -20,17 +27,105 @@ import static org.assertj.core.api.Assertions.*;
 
 public class UsuarioTest extends SpringTest{
 	
+	@Mock
+	private ServicioUsuario servicioLogin;
+
+	@Mock
+	private Usuario usuario;
+	
+	@Mock
+	private HttpServletRequest request;
+	
+	@Mock
+	private HttpSession session;
+
+	@InjectMocks
+	private ControladorUsuario controladorLogin;
 	private Usuario usuario1 , usuario2;
 	private List<Usuario> listaDeUsuarios;
 	private Session sesion;
 	
 	@Before
+	public void inyeccionDeMocksInicializada() {
+		MockitoAnnotations.initMocks(this);
+	}
 	public void inicializacion() {
 		usuario1 = new Usuario();
 		usuario2 = new Usuario();
 		sesion = getSession();
 		listaDeUsuarios = new ArrayList<Usuario>();
 	}
+	
+	@Test
+	public void testQueVerificaQueElLoginSeaValido() {
+		when(request.getSession()).thenReturn(session);
+		when(servicioLogin.consultarUsuario(any(Usuario.class))).thenReturn(usuario);
+		when(usuario.getId()).thenReturn(1L);
+		when(usuario.getNombre()).thenReturn("Marcelo");
+		when(usuario.getPass()).thenReturn("123456");
+		
+		ModelAndView modelo = controladorLogin.irALogin();
+
+		assertThat(modelo.getModel()).isNotEmpty();
+				
+	}
+	
+	@Test
+	public void testQueVerificaQueHayaCerradoSesionCorrectamente() {
+		when(request.getSession()).thenReturn(session);
+		when(servicioLogin.consultarUsuario(any(Usuario.class))).thenReturn(usuario);
+		when(usuario.getId()).thenReturn(1L);
+		when(usuario.getNombre()).thenReturn("Marcelo");
+		when(usuario.getPass()).thenReturn("123456");
+		
+		ModelAndView modelo = controladorLogin.cerrarSession(request);
+		
+		assertThat(modelo.getModel()).isEmpty();
+		
+		verify(session , times(0)).setAttribute("UsuarioId", 1L);
+	
+	}
+	
+	@Test
+	public void testQueVerificaQueHayaCerradoSesionIncorrectamente() {
+		when(request.getSession()).thenReturn(session);
+		when(servicioLogin.consultarUsuario(any(Usuario.class))).thenReturn(usuario);
+		
+		ModelAndView modelo = controladorLogin.cerrarSession(request);
+		
+		assertThat(modelo.getModel().get("aviso")).isEqualTo(null);
+	
+	}
+/*	Me da error, sigo probando de arreglarlo!!
+	@Test
+	public void testQueVerificaQueSePuedaRegistrarUnUsuarioCorrectamente() {
+		when(request.getSession()).thenReturn(session);
+		when(servicioLogin.consultarUsuario(any(Usuario.class))).thenReturn(usuario);
+		when(usuario.getId()).thenReturn(1L);
+		when(usuario.getNombre()).thenReturn("Nombre");
+		when(usuario.getPass()).thenReturn("123456");
+		
+		ModelAndView modelo = controladorLogin.registrarUsuario(usuario, request);
+		
+		assertThat(modelo.getModel().get("aviso")).isEqualTo("Se Creo Usuario Correctamente");
+		
+		verify(session , times(0)).setAttribute("UsuarioId", 1L);
+	}*/
+	
+	@Test
+	public void testQueVerificaQueSePuedaRegistrarUnUsuarioIncorrectamente() {
+		when(request.getSession()).thenReturn(session);
+		when(servicioLogin.consultarUsuario(any(Usuario.class))).thenReturn(usuario);
+		when(usuario.getNombre()).thenReturn("Marcelo");
+		when(usuario.getPass()).thenReturn("123456");
+		
+		ModelAndView modelo = controladorLogin.registrarUsuario(usuario, request);
+		
+		assertThat(modelo.getModel().get("error")).isEqualTo(null);
+		
+		verify(session , times(0)).setAttribute("nombre", "Marcelo");
+	}
+
 	
 	@SuppressWarnings("unlikely-arg-type")
 	@Test

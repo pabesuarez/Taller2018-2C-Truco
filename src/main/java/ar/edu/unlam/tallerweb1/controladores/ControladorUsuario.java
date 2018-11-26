@@ -58,7 +58,7 @@ public class ControladorUsuario {
 	}
 
 	@RequestMapping(path="/registrarUsuario",method=RequestMethod.POST)
-	public ModelAndView irAValidarMascota(@ModelAttribute ("usuario") Usuario usuario,HttpServletRequest request) {
+	public ModelAndView registrarUsuario(@ModelAttribute ("usuario") Usuario usuario,HttpServletRequest request) {
 		
 		ModelMap modelo = new ModelMap();
 		
