@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.unlam.tallerweb1.dao.PartidaEnCursoDao;
 import ar.edu.unlam.tallerweb1.dao.UsuarioDao;
+import ar.edu.unlam.tallerweb1.modelo.Configuracion;
 import ar.edu.unlam.tallerweb1.modelo.Partida;
 import ar.edu.unlam.tallerweb1.modelo.PartidaEnCurso;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
@@ -162,13 +163,12 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		}
 		
 		//si se supera el puntaje requerido se iguala al maximo
-		//PENDIENTE: cambiar 30 por la configuracion de la partida (15/30 o partida.getPuntajeParaGanar)
-		if (partida.getPuntajeJugador1() >30) {
-			partida.setPuntajeJugador1(30);
+		if (partida.getPuntajeJugador1() >partida.getPuntajeParaGanar()) {
+			partida.setPuntajeJugador1(partida.getPuntajeParaGanar());
 		}
 		
-		if (partida.getPuntajeJugador2() >30) {
-			partida.setPuntajeJugador2(30);
+		if (partida.getPuntajeJugador2() >partida.getPuntajeParaGanar()) {
+			partida.setPuntajeJugador2(partida.getPuntajeParaGanar());
 		}
 	}
 	
@@ -201,11 +201,10 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		sumarPuntaje(partida,ganador);
 		
 		//verifica si algun jugador alcanzo el puntaje para ganar
-		//PENDIENTE: cambiar 30 por la configuracion de la partida (15/30 o partida.getPuntajeParaGanar)
 		Integer terminado = 0;
-		if(partida.getPuntajeJugador1() == 30) {
+		if(partida.getPuntajeJugador1() == partida.getPuntajeParaGanar()) {
 			terminado=1;
-		}else if(partida.getPuntajeJugador2() == 30) {
+		}else if(partida.getPuntajeJugador2() == partida.getPuntajeParaGanar()) {
 			terminado=2;
 		}
 		
@@ -244,7 +243,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 
 	//Crea una nueva partida, lo agrega en memoria y le asigna un valor para identificarlo
 	@Override
-	public Partida nuevaPartida() {
+	public Partida nuevaPartida(Configuracion configuracion) {
 		Partida partida = new Partida();
 		partida.setEstado(0);
 		partidasEnCurso.add(partida);
@@ -256,8 +255,9 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		partidaEnCurso.setIdPartida(partida.getPartidaID());
 		partidaEnCursoDao.nuevaPartida(partidaEnCurso);
 		//opciones
-		//PENDIENTE: aplicar configuracion
-		partida.setMano(1);
+		partida.setFlor(configuracion.isFlor());
+		partida.setMano(configuracion.getMano());
+		partida.setPuntajeParaGanar(configuracion.getPuntos());
 		partida.setPartidaEnCursoID(partidaEnCurso.getId());
 		return partida;
 	}
@@ -490,5 +490,21 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		}else {
 			return 1;
 		}
+	}
+	
+	public void mazo(Partida partida, Integer jugador) {
+		Integer ganador = getOponente(jugador);
+
+		//actualizar el mensaje
+		if(jugador==1) {
+			partida.setMensajeJugador1("Mazo");
+		}else {
+			partida.setMensajeJugador2("Mazo");
+		}
+		
+		partida.setCambiosJugador1(true);
+		partida.setCambiosJugador2(true);
+		
+		concluirMano(partida, ganador);
 	}
 }

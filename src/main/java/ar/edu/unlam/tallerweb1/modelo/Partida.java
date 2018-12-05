@@ -35,9 +35,22 @@ public class Partida {
 	private Integer tipoTanto = 0;					//Tipo de Tanto
 	private String mensajeJugador1="";
 	private String mensajeJugador2="";
+	private boolean flor;
+	private Integer puntajeParaGanar;
 	
 	
-	
+	public boolean isFlor() {
+		return flor;
+	}
+	public void setFlor(boolean flor) {
+		this.flor = flor;
+	}
+	public Integer getPuntajeParaGanar() {
+		return puntajeParaGanar;
+	}
+	public void setPuntajeParaGanar(Integer puntajeParaGanar) {
+		this.puntajeParaGanar = puntajeParaGanar;
+	}
 	public String getMensajeJugador1() {
 		return mensajeJugador1;
 	}

@@ -15,6 +15,7 @@ var nombre1;
 var nombre2;
 var envido = 0;
 var envidoOponente = 0;
+var puntajeParaGanar = 0;
 
 var layer = new Konva.Layer();
 
@@ -89,6 +90,20 @@ function comando(tipo){
     });
 }
 
+function mazo(){
+	var send={}
+	send["partidaID"]=idPartida;
+	send["comando"]=6;
+	send["jugador"]=jugador;
+    $.ajax({
+        type: 'POST',
+        contentType : "application/json",
+        url: proyecto+'/app/comando',
+        datatype: 'json',
+        data: JSON.stringify(send)
+    });
+}
+
 function refresh(){
 	layer.draw();
 	
@@ -136,8 +151,8 @@ function dibujarGanador(ronda,ganador){
 
 
 function actualizarPuntaje(njugador,puntaje){
-	if (puntaje>30){
-		puntaje=30;
+	if (puntaje>puntajeParaGanar){
+		puntaje=puntajeParaGanar;
 	}
 	var i = 0;
 	var p;
@@ -267,6 +282,7 @@ function actualizar(){
             		}
             	}
         		
+        		puntosParaGanar = data.puntajeParaGanar;
         		console.log(data);
         		
         		
@@ -335,7 +351,7 @@ function actualizar(){
         		
         		
             	refresh();
-            	if(data.puntajeJugador1 == 30 || data.puntajeJugador2 == 30){
+            	if(data.puntajeJugador1 == puntajeParaGanar || data.puntajeJugador2 == puntajeParaGanar){
             		$("#estado").text("partida terminada");
             	}else{
             		timeout = setTimeout(function(){ actualizar() },1000);

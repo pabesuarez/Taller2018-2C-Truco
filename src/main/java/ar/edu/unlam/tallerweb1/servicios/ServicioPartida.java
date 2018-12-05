@@ -2,6 +2,7 @@ package ar.edu.unlam.tallerweb1.servicios;
 import java.util.ArrayList;
 import java.util.List;
 
+import ar.edu.unlam.tallerweb1.modelo.Configuracion;
 import ar.edu.unlam.tallerweb1.modelo.Partida;
 import ar.edu.unlam.tallerweb1.modelo.PartidaEnCurso;
 
@@ -16,9 +17,10 @@ public interface ServicioPartida {
 	public void noQuiero(Partida partida, Integer jugador);
 	public Integer concluirMano(Partida partida, Integer ganador);
 	public Partida getPartida(Integer partidaID);
-	public Partida nuevaPartida();
+	public Partida nuevaPartida(Configuracion configuracion);
 	public Partida unirseAPartida(Integer partidaID,Long jugadorId);
 	public List<PartidaEnCurso> obtenerPartidasEnCurso();
 	public Integer getOponente(Integer jugador);
 	public String mensajeTruco(Integer truco);
+	public void mazo(Partida partida, Integer jugador);
 }

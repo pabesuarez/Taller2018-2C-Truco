@@ -18,10 +18,16 @@
 			<div class="row">
 				<div class="col-md-12 header">
 					<img style="height:60px" src ="${url}/img/logo.png"/>
-					<span class="ml-3">logeado como: ${sessionScope.usuarioNombre}</span>
+					<c:choose>
+					<c:when test="${sessionScope == null}">
+						<span class="ml-3">logeado como: ${sessionScope.usuarioNombre}</span>
+						<a class="ml-3" href="${url}/cerrar-sesion">Logout</a>	
+					</c:when>
+					<c:otherwise>
 					<a class="ml-3" href="${url}/registro">Registrarse</a>
 					<a class="ml-3" href="${url}/login">Login</a>
-					<a class="ml-3" href="${url}/cerrar-sesion">Logout</a>
+					</c:otherwise>
+					</c:choose>
 				</div>
 			</div>
 			<div class="row">

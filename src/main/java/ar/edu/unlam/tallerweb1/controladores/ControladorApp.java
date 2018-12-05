@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import ar.edu.unlam.tallerweb1.modelo.Configuracion;
 import ar.edu.unlam.tallerweb1.modelo.Mensaje;
 import ar.edu.unlam.tallerweb1.modelo.Partida;
 import ar.edu.unlam.tallerweb1.modelo.PartidaEnCurso;
@@ -70,6 +72,7 @@ public class ControladorApp {
 			3: cantar real envido
 			4: cantar truco/retruco/vale4
 			5: cantar falta envido
+			6: mazo
 			10: respuesta positiva (quiero / cantar envido)
 			11: respuesta negativa (no quiero / son buenas)
 		*/
@@ -84,14 +87,16 @@ public class ControladorApp {
 			servicioPartida.quiero(partida,jugador); break;
 		case 11:
 			servicioPartida.noQuiero(partida,jugador); break;
+		case 6:
+			servicioPartida.mazo(partida, jugador); break;
 		}
 		return respuesta;
 	}
 	
 	// crea una nueva partida y se une
-	@RequestMapping("/nuevaPartida")
-	public String nuevaPartida() {
-		Partida partida = servicioPartida.nuevaPartida();
+	@RequestMapping(path="/nuevaPartida", method=RequestMethod.POST)
+	public String nuevaPartida(@ModelAttribute("configuracion") Configuracion configuracion) {
+		Partida partida = servicioPartida.nuevaPartida(configuracion);
 		//opciones
 		ModelMap modelo = new ModelMap();
 		modelo.put("partida", partida);
@@ -113,6 +118,7 @@ public class ControladorApp {
 		List<PartidaEnCurso> partidas = servicioPartida.obtenerPartidasEnCurso();
 		ModelMap modelo = new ModelMap();
 		modelo.put("partidas", partidas);
+		modelo.put("configuracion", new Configuracion());
 		return new ModelAndView("lobby", modelo);
 	}
 }
