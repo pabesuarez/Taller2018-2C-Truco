@@ -76,6 +76,7 @@ function getOponente(){
 }
 
 function comando(tipo){
+	//sessionStorage.clear();
 	var send={}
 	send["partidaID"]=idPartida;
 	send["comando"]=tipo;
@@ -88,7 +89,53 @@ function comando(tipo){
         data: JSON.stringify(send)
     });
 }
+/* Abandonar partida horrible que no funciona >:'c
+function abandonarPartida(){
+	var send={}
+	send["partidaID"]=idPartida;
+	send["jugador"]=jugador;
+    $.ajax({
+        type: 'POST',
+        contentType : "application/json",
+        url: proyecto+'/abandonoDePartida',
+        datatype: 'json',
+        data: JSON.stringify(send)
+    });
+}
 
+window.onbeforeunload = function (e){
+	abandonarPartida();
+}
+
+function startCounter(){
+	//Contador
+	var counter=0;
+	if(typeof(sessionStorage.getItem('counts'))!='object')
+	{
+	 counter=parseInt(sessionStorage.getItem('counts'));
+	}
+	var timer = setInterval(function () {
+	  if(counter < 50){
+	    console.log(counter);
+	    ++counter;
+	    sessionStorage.setItem('counts',counter);
+	  } else {
+		abandonarPartida();
+	    clearInterval(timer);
+	  }
+	}, 1000);
+
+	}
+function empezarContador(){
+	if((estado==1 || estado == 0) && turno == jugador){
+		timeout = setTimeout(function(){ empezarContador() },1000);
+	}else{
+		startCounter();
+	}
+}
+
+empezarContador();
+*/
 function mazo(){
 	var send={}
 	send["partidaID"]=idPartida;
@@ -500,6 +547,7 @@ function draw(images) {
 }
 
 function tirarCarta(carta){
+	//sessionStorage.clear();
 	console.log(turno);
 	if(jugador==turno){
 		var send={}

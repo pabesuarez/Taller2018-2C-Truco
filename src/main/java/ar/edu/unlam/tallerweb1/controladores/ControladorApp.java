@@ -121,4 +121,23 @@ public class ControladorApp {
 		modelo.put("configuracion", new Configuracion());
 		return new ModelAndView("lobby", modelo);
 	}
+	/*
+	// en caso de que un jugador abandone la partida (cierre la ventana o esté ausente durante 1 minuto)	
+	@ResponseBody
+	@RequestMapping(path = "/abandonoDePartida", method = RequestMethod.POST, produces = "application/json")
+    public void abandonoDePartida (@RequestBody Mensaje mensaje) {
+		//obtengo la partida
+		Partida partida = servicioPartida.getPartida(mensaje.getPartidaID());
+		//Averiguo quién es el ganador por default
+		Integer puntajeParaGanar = partida.getPuntajeParaGanar();
+		Integer ganador = 0;
+		if(mensaje.getJugador() == 1) {
+			ganador = 2;
+			partida.setPuntajeJugador2(puntajeParaGanar);
+		}else {
+			ganador = 1;
+			partida.setPuntajeJugador1(puntajeParaGanar);
+		}
+		servicioPartida.concluirMano(partida, ganador);
+	}*/
 }
