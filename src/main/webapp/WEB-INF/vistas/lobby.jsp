@@ -8,6 +8,45 @@
 <t:default>
 	<jsp:attribute name="body">
 	<div>
+	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#config">
+ Crear nueva partida
+	</button>
+<div class="modal fade" id="config" tabindex="-1" role="dialog" aria-labelledby="configLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="configLabel">Configuración</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+ 			<form:form action="nuevaPartida" method="POST" modelAttribute="configuracion">
+				<h3>Nueva partida</h3>
+				<p>Puntaje para ganar</p>
+				<label for="puntos">15</label>					
+				<form:radiobutton path="puntos" id="puntos1"  value="15"/><br>
+				<label for="puntos">30</label>
+				<form:radiobutton path="puntos" id="puntos2" value="30"/><br>
+				<p>Flor</p>
+				<label for="puntos">Si</label>					
+				<form:radiobutton path="flor" id="florActivada" value="true"/><br>
+				<label for="puntos">No</label>
+				<form:radiobutton path="flor" id="florDesactivada" value="false"/><br>
+				<p>Jugador mano</p>
+				<label for="puntos">Jugador 1</label>					
+				<form:radiobutton path="mano" id="jugador1"  value="1"/><br>
+				<label for="puntos">Jugador 2</label>
+				<form:radiobutton path="mano" id="jugador2"  value="2"/><br>
+				<button type="submit" class="btn btn-primary">Aceptar</button>
+			</form:form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 	<table id="partidas" class="display">
     <thead>
         <tr>
@@ -51,45 +90,8 @@
 		</c:forEach>
     </tbody>
 </table>
- <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
- Crear nueva partida
-	</button>
-<div class="modal fade" id="config" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Configuración</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
- 			<form:form action="nuevaPartida" method="POST" modelAttribute="configuracion">
-				<h3>Nueva partida</h3>
-				<p>Puntaje para ganar</p>
-				<label for="puntos">15</label>					
-				<form:input path="puntos" id="puntos1" type="radio" class="form-control"  value="15"/><br>
-				<label for="puntos">30</label>
-				<form:input path="puntos" id="puntos2" type="radio" class="form-control" value="30"/><br>
-				<p>Puntaje para ganar</p>
-				<label for="puntos">Si</label>					
-				<form:input path="flor" id="florActivada" type="radio" class="form-control"  value="true"/><br>
-				<label for="puntos">No</label>
-				<form:input path="flor" id="florDesactivada" type="radio" class="form-control" value="false"/><br>
-				<p>Jugador mano</p>
-				<label for="puntos">Jugador 1</label>					
-				<form:input path="mano" id="jugador1" type="radio" class="form-control"  value="1"/><br>
-				<label for="puntos">Jugador 2</label>
-				<form:input path="mano" id="jugador2" type="radio" class="form-control" value="2"/><br>
-				<button type="submit" class="btn btn-primary">Aceptar</button>
-			</form:form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-      </div>
-    </div>
-  </div>
-</div>
+ 
+
 
 	</div>
 	</jsp:attribute>

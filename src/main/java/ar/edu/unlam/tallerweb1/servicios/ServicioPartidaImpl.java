@@ -76,6 +76,10 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		//reiniciar mensajes
 		partida.setMensajeJugador1("");
 		partida.setMensajeJugador2("");
+		//set turno
+		partida.setTurno(partida.getMano());
+		// set mano
+		partida.setMano(getOponente(partida.getMano())); //alterna quien es mano
 		//refrescar la pantalla de ambos jugadores
 		partida.setCambiosJugador1(true);
 		partida.setCambiosJugador2(true);
@@ -228,8 +232,6 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		// si no termino, reinicia la ronda
 			repartirCartas(partida);
 			partida.setEstado(2);
-			partida.setMano(getOponente(partida.getMano())); //alterna quien es mano
-			partida.setTurno(partida.getMano()); 
 			partida.setCambiosJugador1(true);
 			partida.setCambiosJugador2(true);
 		}

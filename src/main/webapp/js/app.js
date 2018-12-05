@@ -18,7 +18,6 @@ var envidoOponente = 0;
 var puntajeParaGanar = 0;
 
 var layer = new Konva.Layer();
-
 $(function(){
 	actualizar();		
 });
@@ -282,8 +281,9 @@ function actualizar(){
             		}
             	}
         		
-        		puntosParaGanar = data.puntajeParaGanar;
+        		puntajeParaGanar = data.puntajeParaGanar;
         		console.log(data);
+        		console.log(puntajeParaGanar);
         		
         		
         		if (jugador==1){
@@ -351,7 +351,7 @@ function actualizar(){
         		
         		
             	refresh();
-            	if(data.puntajeJugador1 == puntajeParaGanar || data.puntajeJugador2 == puntajeParaGanar){
+            	if(data.puntajeJugador1 == data.puntajeParaGanar || data.puntajeJugador2 == data.puntajeParaGanar){
             		$("#estado").text("partida terminada");
             	}else{
             		timeout = setTimeout(function(){ actualizar() },1000);
