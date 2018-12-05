@@ -16,6 +16,9 @@
 						<span style="height:31px" id="mensajeOponente" class="border w-100"></span>
 					</div>
 					<div class="row" style="height:122px">
+						<div class="col-6"><button id="abandonarPartida" class="btn btn-success" onclick="abandonarPartida()">Abandonar</button></div><br>
+					</div>
+					<div class="row" style="height:122px">
 						<div class="col-6"><button id="btnTruco" class="btn btn-success" onclick="comando(4)">truco</button></div><br>
 						<div class="col-6"><button id="btnMazo" class="btn btn-success" onclick="mazo()">mazo</button></div>
 					</div>

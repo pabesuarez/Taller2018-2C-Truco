@@ -89,7 +89,7 @@ function comando(tipo){
         data: JSON.stringify(send)
     });
 }
-/* Abandonar partida horrible que no funciona >:'c
+
 function abandonarPartida(){
 	var send={}
 	send["partidaID"]=idPartida;
@@ -102,11 +102,13 @@ function abandonarPartida(){
         data: JSON.stringify(send)
     });
 }
-
-window.onbeforeunload = function (e){
+ 
+$(window).bind('beforeunload', function(){
 	abandonarPartida();
-}
+	return 'Seguro que quiere abandonar?';
+});
 
+/* No logré que funcionase en el caso de que no haga movimientos durante X tiempo
 function startCounter(){
 	//Contador
 	var counter=0;

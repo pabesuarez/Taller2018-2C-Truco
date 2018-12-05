@@ -121,8 +121,8 @@ public class ControladorApp {
 		modelo.put("configuracion", new Configuracion());
 		return new ModelAndView("lobby", modelo);
 	}
-	/*
-	// en caso de que un jugador abandone la partida (cierre la ventana o esté ausente durante 1 minuto)	
+	
+	// en caso de que un jugador abandone la partida (apriete el botón, cierre la ventana o esté ausente durante 1 minuto)	
 	@ResponseBody
 	@RequestMapping(path = "/abandonoDePartida", method = RequestMethod.POST, produces = "application/json")
     public void abandonoDePartida (@RequestBody Mensaje mensaje) {
@@ -139,5 +139,5 @@ public class ControladorApp {
 			partida.setPuntajeJugador1(puntajeParaGanar);
 		}
 		servicioPartida.concluirMano(partida, ganador);
-	}*/
+	}
 }
