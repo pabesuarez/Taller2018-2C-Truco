@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.unlam.tallerweb1.dao.PartidaEnCursoDao;
+import ar.edu.unlam.tallerweb1.dao.PartidaTerminadaDao;
 import ar.edu.unlam.tallerweb1.dao.UsuarioDao;
 import ar.edu.unlam.tallerweb1.modelo.Configuracion;
 import ar.edu.unlam.tallerweb1.modelo.Partida;
@@ -33,6 +34,8 @@ public class ServicioPartidaImpl implements ServicioPartida{
 	@Inject
 	private PartidaEnCursoDao partidaEnCursoDao;
 	
+	@Inject
+	private PartidaTerminadaDao partidaTerminadaDao;
 	public void setPartidaEnCursoDao(PartidaEnCursoDao partidaEnCursoDao) {
 		this.partidaEnCursoDao=partidaEnCursoDao;
 	}
@@ -206,7 +209,10 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		
 		//verifica si algun jugador alcanzo el puntaje para ganar
 		Integer terminado = 0;
-		if(partida.getPuntajeJugador1() == partida.getPuntajeParaGanar()) {
+		if(partida.getPuntajeJugador1() == partida.getPuntajeParaGanar() && partida.getPuntajeJugador2() == partida.getPuntajeParaGanar()) {
+			terminado=3;
+		}
+		else if(partida.getPuntajeJugador1() == partida.getPuntajeParaGanar()) {
 			terminado=1;
 		}else if(partida.getPuntajeJugador2() == partida.getPuntajeParaGanar()) {
 			terminado=2;
@@ -226,6 +232,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		// si la partida termino eliminarla de memoria y base de datos
 		if (terminado !=0) {
 			//PENDIENTE: aplicar estadisticas
+			partidaTerminadaDao.guardarPartidaTerminada(partida, terminado);
 			partidasEnCurso.remove(partida);
 			partidaEnCursoDao.removerPartida(partida.getPartidaEnCursoID());
 		}else {
@@ -411,7 +418,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		}else if(partida.getEstado() == 5 && jugador == partida.getJugadorTanto()) {
 			//decidir el ganador del tanto y cuantos puntos vale
 			partida.setGanadorTanto(servicioTanto.compararTanto(partida));
-			partida.setPuntosPorTanto(servicioTanto.calcularValorTanto(partida.getTipoTanto(), true));
+			partida.setPuntosPorTanto(servicioTanto.calcularValorTanto(partida, true, jugador));
 			partida.setEstado(2); // volver la partida al estado normal
 			
 			//en caso de ganar se le agrega " son mejores"
@@ -456,10 +463,10 @@ public class ServicioPartidaImpl implements ServicioPartida{
 			//inmediatamente se suma el puntaje correspondiente al oponente
 			if(jugador == 1) {
 				partida.setMensajeJugador1("No Quiero");
-				partida.setPuntajeJugador1(partida.getPuntajeJugador1()+servicioTanto.calcularValorTanto(partida.getTipoTanto(), false));
+				partida.setPuntajeJugador1(partida.getPuntajeJugador1()+servicioTanto.calcularValorTanto(partida, false, jugador));
 			}else {
 				partida.setMensajeJugador2("No Quiero");
-				partida.setPuntajeJugador2(partida.getPuntajeJugador2()+servicioTanto.calcularValorTanto(partida.getTipoTanto(), false));
+				partida.setPuntajeJugador2(partida.getPuntajeJugador2()+servicioTanto.calcularValorTanto(partida, false, jugador));
 			}
 			
 			//vuelve la partida al estado normal
@@ -470,7 +477,7 @@ public class ServicioPartidaImpl implements ServicioPartida{
 		}else if(partida.getEstado() == 5 && jugador == partida.getJugadorTanto()) {
 			//se declara ganador del envido al oponente y se aplica el calculo al puntaje
 			partida.setGanadorTanto(getOponente(jugador));
-			partida.setPuntosPorTanto(servicioTanto.calcularValorTanto(partida.getTipoTanto(), true));
+			partida.setPuntosPorTanto(servicioTanto.calcularValorTanto(partida, true, jugador));
 			//vuelve la partida al estado normal
 			partida.setEstado(2);
 			//actualiza el mensaje

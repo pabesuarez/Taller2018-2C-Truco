@@ -111,7 +111,8 @@ public class ServicioTantoImpl implements ServicioTanto {
 	}
 
 	@Override
-	public Integer calcularValorTanto(Integer tipo, boolean respuesta) {
+	public Integer calcularValorTanto(Partida partida, boolean respuesta, Integer jugador) {
+		Integer tipo = partida.getTipoTanto();
 		if (respuesta) {
 			switch(tipo) {
 			case 1: return 2;
@@ -120,7 +121,13 @@ public class ServicioTantoImpl implements ServicioTanto {
 			case 5: return 5;
 			case 8: return 7;
 			case 3: case 6: case 7: case 9: case 10: case 11: 
-				return 30;
+				if(jugador == 1) {
+					Integer valorTotal = partida.getPuntajeParaGanar() - partida.getPuntajeJugador2();
+					return valorTotal;
+				}else {
+					Integer valorTotal = partida.getPuntajeParaGanar() - partida.getPuntajeJugador1();
+					return valorTotal;
+				}
 			}
 			return 0;
 		}else {

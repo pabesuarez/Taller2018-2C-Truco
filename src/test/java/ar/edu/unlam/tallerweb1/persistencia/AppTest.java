@@ -12,6 +12,7 @@ import org.junit.Test;
 import ar.edu.unlam.tallerweb1.controladores.ControladorApp;
 import ar.edu.unlam.tallerweb1.dao.PartidaEnCursoDao;
 import ar.edu.unlam.tallerweb1.dao.UsuarioDao;
+import ar.edu.unlam.tallerweb1.modelo.Configuracion;
 import ar.edu.unlam.tallerweb1.modelo.Mazo;
 import ar.edu.unlam.tallerweb1.modelo.Mensaje;
 import ar.edu.unlam.tallerweb1.modelo.Partida;
@@ -29,6 +30,11 @@ public class AppTest {
 		HttpServletRequest servlet = mock(HttpServletRequest.class);
 		HttpSession sesion = mock(HttpSession.class);
 		when(servlet.getSession()).thenReturn(sesion);
+		// Nueva instancia de la configuración
+		Configuracion configuracion = new Configuracion();
+		configuracion.setFlor(false);
+		configuracion.setMano(1);
+		configuracion.setPuntos(30);
 		//mock del mazo para decidir el valor de las cartas
 		Mazo mazo = mock(Mazo.class);
 		//cartas jugador 1
@@ -52,7 +58,7 @@ public class AppTest {
 		ControladorApp controlador = new ControladorApp();
 		//crea una partida y une dos jugadores
 		controlador.setServicioPartida(servicioPartida);
-		controlador.nuevaPartida();
+		controlador.nuevaPartida(configuracion);
 		Partida partida = servicioPartida.getPartida(0);
 		controlador.jugar(partida.getPartidaID(), servlet);
 		controlador.jugar(partida.getPartidaID(), servlet);
@@ -84,5 +90,7 @@ public class AppTest {
 		assertThat(partida.getManoJugador2()).isEqualTo(new int[] {12,14,25});
 		
 	}
+	
+	
 	
 }

@@ -12,32 +12,39 @@ public class PartidasTerminadas {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	
-	private String ganador;
-	private String perdedor;
-	
+	@ManyToOne
+	private Usuario ganador;
 	@ManyToOne
 	private Usuario jugador1;
 	@ManyToOne
 	private Usuario jugador2;
 	
+	private Integer puntajeJugador1;
+	
+	public Integer getPuntajeJugador1() {
+		return puntajeJugador1;
+	}
+	public void setPuntajeJugador1(Integer puntajeJugador1) {
+		this.puntajeJugador1 = puntajeJugador1;
+	}
+	public Integer getPuntajeJugador2() {
+		return puntajeJugador2;
+	}
+	public void setPuntajeJugador2(Integer puntajeJugador2) {
+		this.puntajeJugador2 = puntajeJugador2;
+	}
+	private Integer puntajeJugador2;
 	public Long getId() {
 		return id;
 	}
 	public void setId(Long id) {
 		this.id = id;
 	}
-	public String getGanador() {
+	public Usuario getGanador() {
 		return ganador;
 	}
-	public void setGanador(String ganador) {
+	public void setGanador(Usuario ganador) {
 		this.ganador = ganador;
-	}
-	public String getPerdedor() {
-		return perdedor;
-	}
-	public void setPerdedor(String perdedor) {
-		this.perdedor = perdedor;
 	}
 	public Usuario getJugador1() {
 		return jugador1;

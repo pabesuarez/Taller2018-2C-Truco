@@ -6,6 +6,7 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -65,7 +66,8 @@ public class PartidaEnCursoDaoImpl implements PartidaEnCursoDao {
 		final Session session = sessionFactory.getCurrentSession();
 		@SuppressWarnings("unchecked")
 		List<PartidaEnCurso> partidas = session.createCriteria(PartidaEnCurso.class)
-								 		.list();
+		.addOrder(Order.desc("id"))
+		.list();
 		return partidas;
 	}
 
