@@ -1,10 +1,14 @@
 package ar.edu.unlam.tallerweb1.dao;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Order;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import ar.edu.unlam.tallerweb1.modelo.Partida;
 import ar.edu.unlam.tallerweb1.modelo.PartidaEnCurso;
@@ -48,4 +52,15 @@ public class PartidaTerminadaDaoImpl implements PartidaTerminadaDao{
 		session.save(partidaTerminada);
 		
 	};
+	@Override
+	@Transactional
+	public List<PartidasTerminadas> obtenerUltimas5PartidasTerminadas(){
+		final Session session = sessionFactory.getCurrentSession();
+		@SuppressWarnings("unchecked")
+		List<PartidasTerminadas> partidas = session.createCriteria(PartidasTerminadas.class)
+									.setMaxResults(5)
+									.addOrder(Order.desc("id"))
+									.list();
+		return partidas;
+	}
 }

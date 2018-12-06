@@ -1,5 +1,7 @@
 package ar.edu.unlam.tallerweb1.controladores;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,6 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import ar.edu.unlam.tallerweb1.dao.PartidaTerminadaDao;
+import ar.edu.unlam.tallerweb1.modelo.Configuracion;
+import ar.edu.unlam.tallerweb1.modelo.PartidaEnCurso;
+import ar.edu.unlam.tallerweb1.modelo.PartidasTerminadas;
 import ar.edu.unlam.tallerweb1.modelo.Usuario;
 import ar.edu.unlam.tallerweb1.servicios.ServicioUsuario;
 
@@ -19,6 +25,9 @@ public class ControladorUsuario {
 	@Inject
 	private ServicioUsuario servicioUsuario;
 
+	@Inject
+	private PartidaTerminadaDao partidaTerminadaDao;
+	
 	@RequestMapping("/login")
 	public ModelAndView irALogin() {
 		ModelMap modelo = new ModelMap();
@@ -44,8 +53,11 @@ public class ControladorUsuario {
 
 	//muestra la pagina principal
 	@RequestMapping(path = "/", method = RequestMethod.GET)
-	public String irAHome() {
-		return "index";
+	public ModelAndView index() {
+		List<PartidasTerminadas> partidas = partidaTerminadaDao.obtenerUltimas5PartidasTerminadas();
+		ModelMap modelo = new ModelMap();
+		modelo.put("partidas", partidas);
+		return new ModelAndView("index", modelo);
 	}
 	
 	//muestra la pagina de registro

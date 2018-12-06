@@ -141,7 +141,7 @@ public class UsuarioTest extends SpringTest{
 		
 		ControladorUsuario controladorLogin = new ControladorUsuario();
 		
-		assertThat(controladorLogin.irAHome().equals(primerUsuario)).isNotNull();
+		assertThat(controladorLogin.index().equals(primerUsuario)).isNotNull();
 		
     }
 	

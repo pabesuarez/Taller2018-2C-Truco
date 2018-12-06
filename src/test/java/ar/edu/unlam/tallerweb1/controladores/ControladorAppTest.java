@@ -32,7 +32,7 @@ public class ControladorAppTest {
 	}
 	
 	@Test
-	public void MetodoQueUneAPartidaExistente() {
+	public void MetodoQueDeberiaUnirAPartidaExistente() {
 		ServicioPartida servicioPartida = mock(ServicioPartida.class);
 		HttpServletRequest request = mock(HttpServletRequest.class);
 		HttpSession session = mock(HttpSession.class);
