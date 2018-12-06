@@ -17,9 +17,11 @@
 		<div class ="container">
 			<div class="row">
 				<div class="col-md-12 header">
-					<img style="height:60px" src ="${url}/img/logo.png"/>
-					<c:choose>
-					<c:when test="${sessionScope == null}">
+				 <a href="${url}">
+<img style="height:60px" src ="${url}/img/logo.png"/>
+				</a>
+<c:choose>
+					<c:when test="${not empty sessionScope}">
 						<span class="ml-3 text-white">¡Hola ${sessionScope.usuarioNombre}!</span>
 						<a class="ml-3 text-white" href="${url}/cerrar-sesion">Logout</a>	
 					</c:when>

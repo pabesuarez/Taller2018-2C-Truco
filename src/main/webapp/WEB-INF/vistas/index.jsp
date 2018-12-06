@@ -37,7 +37,7 @@
     				<td class="text-success">Invitado</td>
     			</c:when>
     			<c:otherwise>
-    				<td class="text-success">${partida.jugador1}</td>
+    				<td class="text-success">${partida.jugador1.nombre}</td>
     			</c:otherwise>
     		</c:choose>
        				<td><p class="text-success">${partida.puntajeJugador1}</p></td>
@@ -48,7 +48,7 @@
     				<td class="text-danger" >Invitado</td>
     				</c:when>
     				<c:otherwise>
-    				<td class="text-danger">${partida.jugador2}</td>
+    				<td class="text-danger">${partida.jugador2.nombre}</td>
     				</c:otherwise>
     		</c:choose>
     			</c:when>
@@ -69,7 +69,7 @@
     				<td class="text-success" >Invitado</td>
     				</c:when>
     				<c:otherwise>
-    				<td class="text-success">${partida.jugador2}</td>
+    				<td class="text-success">${partida.jugador2.nombre}</td>
     				</c:otherwise>
     		</c:choose>
     			</c:otherwise>

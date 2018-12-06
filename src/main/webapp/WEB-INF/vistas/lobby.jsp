@@ -27,15 +27,15 @@
 				<label for="puntos">15</label>					
 				<form:radiobutton path="puntos" id="puntos1"  value="15"/><br>
 				<label for="puntos">30</label>
-				<form:radiobutton path="puntos" id="puntos2" value="30"/><br>
+				<form:radiobutton path="puntos" id="puntos2" value="30" checked="checked"/><br>
 				<p>Flor</p>
 				<label for="puntos">Si</label>					
 				<form:radiobutton path="flor" id="florActivada" value="true"/><br>
 				<label for="puntos">No</label>
-				<form:radiobutton path="flor" id="florDesactivada" value="false"/><br>
+				<form:radiobutton path="flor" id="florDesactivada" value="false" checked="checked"/><br>
 				<p>Jugador mano</p>
 				<label for="puntos">Jugador 1</label>					
-				<form:radiobutton path="mano" id="jugador1"  value="1"/><br>
+				<form:radiobutton path="mano" id="jugador1"  value="1" checked="checked"/><br>
 				<label for="puntos">Jugador 2</label>
 				<form:radiobutton path="mano" id="jugador2"  value="2"/><br>
 				<button type="submit" class="btn btn-primary">Aceptar</button>
@@ -72,7 +72,7 @@
     		<td>${partida.mensaje}</td>
     		 	<c:choose>
     				<c:when test="${not empty partida.jugador1.id}">
-       					<td>${partida.jugador1.id}</td>
+       					<td>${partida.jugador1.nombre}</td>
     				</c:when>
     				<c:otherwise>
        					<td>Invitado</td>
